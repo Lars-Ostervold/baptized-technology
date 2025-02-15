@@ -10,7 +10,7 @@ export default function Hero() {
         </h1>
         <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
           Technology is advancing at an unprecedented pace. But innovation without purpose is empty. At Baptized
-          Technology, we transform AI and digital tools so they don't just serve the world—but serve the Kingdom,
+          Technology, we transform AI and digital tools so they don&apos;t just serve the world—but serve the Kingdom,
           guiding hearts deeper into faith.
         </p>
       </div>

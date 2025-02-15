@@ -1,16 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 import React, { useRef, useEffect } from 'react'
 import * as THREE from 'three'
 
 const WaterBackground = () => {
-  const containerRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer()
     renderer.setSize(window.innerWidth, window.innerHeight)
-    containerRef.current.appendChild(renderer.domElement)
+    if (containerRef.current) {
+      containerRef.current.appendChild(renderer.domElement)
+    }
 
     const geometry = new THREE.PlaneGeometry(2, 2)
 

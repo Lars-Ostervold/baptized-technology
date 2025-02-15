@@ -115,7 +115,7 @@ const RealisticWaterBackground: React.FC = () => {
     // wave speed in response to mouse movement, for example:
     const onPointerMove = (event: PointerEvent) => {
       const x = event.clientX / window.innerWidth;
-      const y = event.clientY / window.innerHeight;
+      // const y = event.clientY / window.innerHeight;
       // Example: Adjust distortion slightly based on cursor
       water.material.uniforms["distortionScale"].value = 3.0 + x * 2.0;
     };
@@ -127,6 +127,7 @@ const RealisticWaterBackground: React.FC = () => {
       window.removeEventListener("resize", onWindowResize);
       window.removeEventListener("pointermove", onPointerMove);
       if (containerRef.current?.contains(renderer.domElement)) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         containerRef.current.removeChild(renderer.domElement);
       }
       renderer.dispose();
