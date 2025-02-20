@@ -2,23 +2,23 @@ import { BookIcon as Bible, Cloud, Shield, Heart } from "lucide-react"
 
 const features = [
   {
-    name: "Faith-Driven AI",
-    description: "Harness the power of AI to deepen understanding of scripture and foster spiritual growth.",
+    name: "Conversational Discipleship",
+    description: "Engage with AI-powered chatbots trained in biblical wisdom—whether you&apos;re exploring C.S. Lewis&apos; insights, studying Psalms, or deepening your theological understanding.",
     icon: Bible,
   },
   {
-    name: "Secure Cloud Solutions",
-    description: "Scalable, resilient, and secure cloud infrastructure for churches and faith-based organizations.",
+    name: "Scripture Study & Exploration",
+    description: "Go beyond reading—interact with Scripture like never before. Get AI-powered summaries, cross-references, and guided reflections on biblical passages.",
     icon: Cloud,
   },
   {
-    name: "Digital Discipleship",
-    description: "Innovative tools to support and enhance digital ministry and online community building.",
+    name: "AI-Guided Learning",
+    description: "From book summaries to interactive Q&A on Christian classics, our AI tools make deep theological learning more accessible than ever.",
     icon: Heart,
   },
   {
-    name: "Data Protection",
-    description: "State-of-the-art security measures to protect sensitive information and preserve privacy.",
+    name: "Faith-Driven Innovation",
+    description: "The future of technology should serve the Kingdom. We&apos;re building AI-driven tools to empower believers, churches, and ministries for digital discipleship",
     icon: Shield,
   },
 ]
@@ -28,10 +28,10 @@ export default function Features() {
     <section className="container space-y-16 py-24 md:py-32">
       <div className="mx-auto max-w-[58rem] text-center">
         <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">
-          Transformative Solutions
+          Transformative Tools for Digital Discipleship
         </h2>
         <p className="mt-4 text-muted-foreground sm:text-lg">
-          Discover how Baptized Technology can empower your ministry with our innovative, faith-driven technologies.
+          Discover how Baptized Technology is rethinking AI for faith. Our tools aren&apos;t just digital—they&apos;re discipleship-driven, designed to help believers and seekers engage Scripture, explore theology, and grow in their walk with Christ.        
         </p>
       </div>
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">

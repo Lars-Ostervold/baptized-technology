@@ -9,14 +9,14 @@ export default function Hero() {
           Technology Refined in the Waters of Baptism
         </h1>
         <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-          Technology is advancing at an unprecedented pace. But innovation without purpose is empty. At Baptized
-          Technology, we transform AI and digital tools so they don&apos;t just serve the world—but serve the Kingdom,
-          guiding hearts deeper into faith.
+          Technology is advancing at an unprecedented pace. But innovation without purpose is empty. 
+          At Baptized Technology, we refine AI and digital tools to serve the Kingdom—guiding hearts 
+          deeper into faith and discipleship.
         </p>
       </div>
       <div className="flex gap-4">
         <Button size="lg">
-          Explore Solutions
+          Explore the Vision
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>

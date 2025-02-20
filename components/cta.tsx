@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
 
 export default function CTA() {
   return (
@@ -8,11 +9,11 @@ export default function CTA() {
           Ready to baptize your technology in purpose?
         </h2>
         <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-          Join forward-thinking churches and faith-based organizations who trust Baptized Technology to drive their
-          digital transformation and deepen their impact in the digital age.
+          Step into the future of faith-driven technology. Explore AI-powered discipleship tools trusted by believers seeking to grow deeper in their walk with Jesus.
         </p>
         <Button size="lg">
-          Start Your Journey Today
+          Explore the Chatbots
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </section>
