@@ -1,15 +1,35 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
-import type React from "react"
 import type { Metadata } from "next"
 import WaterBackground from "@/components/water-background"
 import Navbar from "@/components/navbar"
+import { SITE_IMAGE, SITE_URL, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/constants"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Amane Soft - Cutting-Edge Software Solutions",
-  description: "Amane Soft delivers innovative, high-performance software solutions for businesses of the future.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    images: [SITE_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [SITE_IMAGE],
+  },
+  icons: {
+    icon: [
+      { rel: "apple-touch-icon", sizes: "180x180", url: "/favicon/apple-touch-icon.png" },
+      { rel: "icon", type: "image/png", sizes: "32x32", url: "/favicon/favicon-32x32.png" },
+      { rel: "icon", type: "image/png", sizes: "16x16", url: "/favicon/favicon-16x16.png" },
+      { rel: "shortcut icon", url: "/favicon/favicon.ico" },
+    ],
+  }
 }
 
 export default function RootLayout({
@@ -29,4 +49,3 @@ export default function RootLayout({
     </html>
   )
 }
-
