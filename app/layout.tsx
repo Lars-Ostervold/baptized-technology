@@ -3,22 +3,22 @@ import { Inter } from "next/font/google"
 import type { Metadata } from "next"
 import WaterBackground from "@/components/water-background"
 import Navbar from "@/components/navbar"
-import { SITE_IMAGE, SITE_URL, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/constants"
+import { SITE_IMAGE, SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: SITE_TITLE,
+  title: SITE_NAME,
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: SITE_TITLE,
+    title: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     images: [SITE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_TITLE,
+    title: SITE_NAME,
     description: SITE_DESCRIPTION,
     images: [SITE_IMAGE],
   },
