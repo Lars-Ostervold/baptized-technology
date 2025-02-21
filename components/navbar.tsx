@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Github, Menu } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import Image from "next/image"
 
 export default function Navbar() {
   return (
@@ -12,9 +13,7 @@ export default function Navbar() {
             <span className="font-bold">Baptized Technology</span>
           </div>
           <div className="sm:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="font-bold text-primary-foreground">BT</span>
-            </div>
+              <Image src="/images/compact_logo_BT.png" alt="Baptized Technology" width={32} height={32} />
           </div>
         </Link>
         <nav className="hidden flex-1 items-center space-x-6 text-sm font-medium md:flex">
