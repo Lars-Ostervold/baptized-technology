@@ -79,7 +79,6 @@ const WaterBackground = () => {
     function onMouseMove(event: { clientX: number; clientY: number }) {
       uniforms.u_mouse.value.x = event.clientX
       uniforms.u_mouse.value.y = window.innerHeight - event.clientY
-      console.log(`Mouse moved: ${uniforms.u_mouse.value.x}, ${uniforms.u_mouse.value.y}`)
     }
 
     window.addEventListener("resize", onWindowResize)

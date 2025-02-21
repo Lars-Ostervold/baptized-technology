@@ -11,7 +11,7 @@ export default function Hero() {
         <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
           Technology is advancing at an unprecedented pace. But innovation without purpose is empty. 
           At Baptized Technology, we refine AI and digital tools to serve the Kingdom—guiding hearts 
-          deeper into faith and discipleship.
+          into deeper faith and discipleship.
         </p>
       </div>
       <div className="flex gap-4">
