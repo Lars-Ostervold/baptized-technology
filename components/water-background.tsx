@@ -42,11 +42,11 @@ const WaterBackground = () => {
           vec3 color = vec3(0.0);
           
           // Dark blue base color
-          color = vec3(0.0, 0.02, 0.05);
+          color = vec3(0.098, 0.153, 0.204);
 
           // Water ripple effect
           float t = u_time * 0.1;
-          vec2 uv = st * 10.0;
+          vec2 uv = st * (u_resolution.x < 600.0 ? 20.0 : 10.0); // Scale uv based on screen width
           
           for(float i = 1.0; i < 3.0; i++){
             uv.y += i * 0.15 * sin(uv.x * i * 0.5 + t * i);
@@ -56,7 +56,7 @@ const WaterBackground = () => {
           float r = abs(sin(uv.x - uv.y));
           
           // Add subtle blue highlights
-          color += vec3(0.0, 0.05, 0.1) * r;
+          color += vec3(0.0, 0.10, 0.15) * r;
 
           gl_FragColor = vec4(color, 1.0);
         }
