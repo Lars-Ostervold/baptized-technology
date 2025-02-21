@@ -14,13 +14,8 @@ export default function Footer() {
             <h3 className="text-sm font-medium">Solutions</h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/ai-scripture" className="text-muted-foreground transition-colors hover:text-primary">
-                  AI Scripture Analysis
-                </Link>
-              </li>
-              <li>
-                <Link href="/digital-ministry" className="text-muted-foreground transition-colors hover:text-primary">
-                  Digital Ministry
+                <Link href="/chatbots" className="text-muted-foreground transition-colors hover:text-primary">
+                  AI Chatbots
                 </Link>
               </li>
             </ul>
@@ -34,8 +29,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-muted-foreground transition-colors hover:text-primary">
-                  Careers
+                <Link href="/vision" className="text-muted-foreground transition-colors hover:text-primary">
+                  Vision
                 </Link>
               </li>
             </ul>
