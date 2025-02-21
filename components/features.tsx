@@ -1,25 +1,25 @@
-import { BookIcon as Bible, Cloud, Shield, Heart } from "lucide-react"
+import { MessageCircle, BookIcon as Bible, Cloud, Heart } from "lucide-react"
 
 const features = [
   {
     name: "Conversational Discipleship",
-    description: "Engage with AI-powered chatbots trained in biblical wisdom—whether you&apos;re exploring C.S. Lewis&apos; insights, studying Psalms, or deepening your theological understanding.",
-    icon: Bible,
+    description: "Engage with AI-powered chatbots trained in biblical wisdom—whether you're exploring C.S. Lewis' insights, studying Psalms, or deepening your theological understanding.",
+    icon: MessageCircle,
   },
   {
     name: "Scripture Study & Exploration",
     description: "Go beyond reading—interact with Scripture like never before. Get AI-powered summaries, cross-references, and guided reflections on biblical passages.",
-    icon: Cloud,
+    icon: Bible,
   },
   {
     name: "AI-Guided Learning",
     description: "From book summaries to interactive Q&A on Christian classics, our AI tools make deep theological learning more accessible than ever.",
-    icon: Heart,
+    icon: Cloud,
   },
   {
     name: "Faith-Driven Innovation",
-    description: "The future of technology should serve the Kingdom. We&apos;re building AI-driven tools to empower believers, churches, and ministries for digital discipleship",
-    icon: Shield,
+    description: "The future of technology should serve the Kingdom. We're building AI-driven tools to empower believers, churches, and ministries for digital discipleship",
+    icon: Heart,
   },
 ]
 
