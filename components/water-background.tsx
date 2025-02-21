@@ -56,7 +56,7 @@ const WaterBackground = () => {
           float r = abs(sin(uv.x - uv.y));
           
           // Add subtle blue highlights
-          color += vec3(0.0, 0.05, 0.075) * r;
+          color += vec3(0.0, 0.10, 0.15) * r;
 
           gl_FragColor = vec4(color, 1.0);
         }
