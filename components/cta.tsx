@@ -12,7 +12,7 @@ export default function CTA() {
           Step into the future of faith-driven technology. Explore AI-powered discipleship tools trusted by believers seeking to grow deeper in their walk with Jesus.
         </p>
         <Button size="lg">
-          Explore the Chatbots
+          Explore the Buddies
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>

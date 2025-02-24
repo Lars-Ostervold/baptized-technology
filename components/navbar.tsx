@@ -68,7 +68,7 @@ export default function Navbar() {
                     Contact
                   </Button>
                   <Button size="default" className="justify-start">
-                    Try the AI
+                    Try the Buddies
                   </Button>
                 </div>
               </div>

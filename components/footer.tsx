@@ -15,7 +15,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/chatbots" className="text-muted-foreground transition-colors hover:text-primary">
-                  AI Chatbots
+                  AI Bible Buddies
                 </Link>
               </li>
             </ul>
