@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   keywords: SITE_KEYWORDS,
   applicationName: SITE_NAME,
+  robots: "follow, index",
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
