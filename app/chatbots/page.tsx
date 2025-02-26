@@ -5,6 +5,8 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ChatbotCard } from "@/components/chatbot-card"
 import { Bot, Brain, Code, BookOpen, Stethoscope, Scale, Calculator, Briefcase, Wrench, Microscope } from "lucide-react"
+import { LoginDialog } from "@/components/auth/login-dialog"
+import { useAuth } from "@/components/auth/auth-provider"
 
 const chatbots = [
   {
@@ -108,6 +110,7 @@ const chatbots = [
 ]
 
 export default function SolutionsPage() {
+  const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredChatbots = chatbots.filter(
@@ -125,6 +128,13 @@ export default function SolutionsPage() {
           Discover our specialized AI chatbots designed to revolutionize different industries
         </p>
       </div>
+
+      {!user && (
+        <div className="max-w-md mx-auto mb-8 p-4 bg-muted/50 rounded-lg text-center">
+          <p className="text-sm text-muted-foreground mb-2">Want to save your chat history and preferences?</p>
+          <LoginDialog />
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="relative max-w-md mx-auto mb-12">
