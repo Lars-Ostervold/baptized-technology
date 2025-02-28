@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default function CTA() {
   return (
@@ -11,10 +12,12 @@ export default function CTA() {
         <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
           Step into the future of faith-driven technology. Explore AI-powered discipleship tools trusted by believers seeking to grow deeper in their walk with Jesus.
         </p>
-        <Button size="lg">
-          Explore the Buddies
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
+        <Link href="/vision">
+          <Button size="lg">
+            Explore the AI
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
       </div>
     </section>
   )

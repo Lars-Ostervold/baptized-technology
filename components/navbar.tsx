@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Github, Menu } from "lucide-react"
+import { Github, Menu, Heart, MessageSquare } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { ContactDialog } from "@/components/contact-dialog"
 import Image from "next/image"
 
 export default function Navbar() {
@@ -25,18 +26,30 @@ export default function Navbar() {
           </Link>
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <Link href="https://github.com/baptizedtech" target="_blank" rel="noreferrer">
+          <Link href="https://github.com/baptizedtechnology" target="_blank" rel="noreferrer">
             <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
               <Github className="h-4 w-4" />
               <span className="sr-only">GitHub</span>
             </Button>
           </Link>
-          <Button variant="ghost" size="default" className="hidden animate-shimmer sm:inline-flex">
-            Contact
-          </Button>
-          <Button size="default" className="hidden animate-shimmer sm:inline-flex">
-            Try the AI
-          </Button>
+          <Link href="/support" className="hidden sm:inline-flex">
+            <Button variant="ghost" size="default" className="flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              <span>Support</span>
+            </Button>
+          </Link>
+          {/* Only show ContactDialog on desktop */}
+          <div className="hidden sm:block">
+            <ContactDialog />
+          </div>
+          {/* Only show Try the AI button on desktop */}
+          <div className="hidden sm:block">
+            <Link href="/chatbots">
+              <Button size="default" className="justify-start">
+                Try the AI
+              </Button>
+            </Link>
+          </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
@@ -56,7 +69,7 @@ export default function Navbar() {
                 </Link>
                 <div className="flex flex-col space-y-2 pt-4">
                   <Link
-                    href="https://github.com/baptizedtech"
+                    href="https://github.com/baptizedtechnology"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center space-x-2"
@@ -64,12 +77,25 @@ export default function Navbar() {
                     <Github className="h-4 w-4" />
                     <span>GitHub</span>
                   </Link>
-                  <Button variant="ghost" size="default" className="justify-start">
-                    Contact
-                  </Button>
-                  <Button size="default" className="justify-start">
-                    Try the Buddies
-                  </Button>
+                  <Link
+                    href="/support"
+                    className="inline-flex items-center space-x-2"
+                  >
+                    <Heart className="h-4 w-4" />
+                    <span>Support</span>
+                  </Link>
+                  {/* Format ContactDialog to match other mobile menu items */}
+                  <ContactDialog>
+                    <div className="inline-flex items-center space-x-2">
+                      <MessageSquare className="h-4 w-4" />
+                      <span>Contact</span>
+                    </div>
+                  </ContactDialog>
+                  <Link href="/chatbots" className="inline-flex items-center">
+                    <Button size="default" className="justify-start w-full">
+                      Try the AI
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </SheetContent>
@@ -79,4 +105,3 @@ export default function Navbar() {
     </header>
   )
 }
-

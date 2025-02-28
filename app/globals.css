@@ -69,3 +69,18 @@
   }
 }
 
+@layer components {
+  .chat-bubble-gradient {
+    background: linear-gradient(120deg, #e0f2fe 0%, #f0f9ff 100%);
+  }
+  
+  .user-chat-bubble-gradient {
+    background: linear-gradient(120deg, #3b82f6 0%, #2563eb 100%);
+  }
+}
+
+/* Add smooth scrolling to all elements */
+* {
+  scroll-behavior: smooth;
+}
+

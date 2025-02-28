@@ -15,7 +15,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/chatbots" className="text-muted-foreground transition-colors hover:text-primary">
-                  AI Bible Buddies
+                  Baptized Chatbots
                 </Link>
               </li>
             </ul>
@@ -49,25 +49,11 @@ export default function Footer() {
             <h3 className="text-sm font-medium">Connect</h3>
             <div className="flex space-x-4">
               <Link
-                href="https://github.com/baptizedtech"
+                href="https://github.com/baptizedtechnology"
                 className="text-muted-foreground transition-colors hover:text-primary"
               >
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
-              </Link>
-              <Link
-                href="https://twitter.com/baptizedtech"
-                className="text-muted-foreground transition-colors hover:text-primary"
-              >
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link
-                href="https://linkedin.com/company/baptizedtech"
-                className="text-muted-foreground transition-colors hover:text-primary"
-              >
-                <Linkedin className="h-5 w-5" />
-                <span className="sr-only">LinkedIn</span>
               </Link>
             </div>
           </div>
