@@ -1,11 +1,29 @@
 'use client'
 
-import { FormEvent, useRef, useEffect } from 'react'
+import { FormEvent, useRef, useEffect, ChangeEvent } from 'react'
 import { Send, Sparkles, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export function ChatInput({ input, handleInputChange, handleSubmit, status, placeholder = "Type your message..." }) {
-  const inputRef = useRef(null)
+// Define status type
+type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
+// Define props interface
+interface ChatInputProps {
+  input: string
+  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void
+  handleSubmit: (e: FormEvent) => void
+  status: ChatStatus
+  placeholder?: string
+}
+
+export function ChatInput({ 
+  input, 
+  handleInputChange, 
+  handleSubmit, 
+  status, 
+  placeholder = "Type your message..." 
+}: ChatInputProps) {
+  // Properly type the ref
+  const inputRef = useRef<HTMLInputElement>(null)
   const isReady = status !== 'streaming' && status !== 'submitted'
   
   // Focus input on mount and when status changes to ready
@@ -20,6 +38,14 @@ export function ChatInput({ input, handleInputChange, handleSubmit, status, plac
     if (input.trim() && isReady) {
       handleSubmit(e)
     }
+  }
+
+  // Function to clear input with proper typing
+  const clearInput = () => {
+    const event = { 
+      target: { value: '' } 
+    } as ChangeEvent<HTMLInputElement>
+    handleInputChange(event)
   }
 
   return (
@@ -47,7 +73,7 @@ export function ChatInput({ input, handleInputChange, handleSubmit, status, plac
         {input && (
           <button
             type="button"
-            onClick={() => handleInputChange({ target: { value: '' } } as any)}
+            onClick={clearInput}
             className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1"
           >
             <X size={16} />

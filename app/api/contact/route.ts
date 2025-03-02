@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         <h3>Message:</h3>
         <p>${message.replace(/\n/g, '<br>')}</p>
       `,
-      reply_to: email,
+      replyTo: email,
     });
     
     if (error) {

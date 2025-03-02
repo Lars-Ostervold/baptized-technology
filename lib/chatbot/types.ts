@@ -1,9 +1,6 @@
 // lib/chatbot/types.ts
 import type { LucideIcon } from "lucide-react"
-import type { UIMessage } from "@ai-sdk/react"
-
-// Export the UIMessage type from AI SDK
-export type { UIMessage as Message } from "@ai-sdk/react"
+import type { Message } from "@ai-sdk/react"
 
 export type Source = {
   id: string
@@ -16,7 +13,7 @@ export type Source = {
 export type ChatSession = {
   id: string
   title: string
-  messages: UIMessage[]
+  messages: Message[]
   createdAt: Date
   updatedAt: Date
 }

@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai'
+import { openai } from '@/lib/openai'
 import { streamText } from 'ai'
 import { getChatbotConfig } from '@/lib/chatbot/config'
 
@@ -17,6 +17,7 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     })
     
     // Ensure the system message matches the configuration
+    // eslint-disable-next-line prefer-const
     let processedMessages = [...messages]
     
     // Find and update system message if it exists

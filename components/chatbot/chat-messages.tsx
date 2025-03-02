@@ -5,9 +5,28 @@ import { User, Bot, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
+import type { Message } from '@ai-sdk/react'
 
-export function ChatMessages({ messages, status, welcomeMessage = "Send a message to begin chatting with the AI assistant.", examples = [], onExampleClick }) {
-  const messagesEndRef = useRef(null)
+// Define the status type similar to chat-input.tsx
+type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
+
+// Define props interface
+interface ChatMessagesProps {
+  messages: Message[]
+  status: ChatStatus
+  welcomeMessage?: string
+  examples?: string[]
+  onExampleClick: (example: string) => void
+}
+
+export function ChatMessages({ 
+  messages, 
+  status, 
+  welcomeMessage = "Send a message to begin chatting with the AI assistant.", 
+  examples = [], 
+  onExampleClick 
+}: ChatMessagesProps) {
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
   
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -44,7 +63,7 @@ export function ChatMessages({ messages, status, welcomeMessage = "Send a messag
   return (
     <div className="flex-1 overflow-y-auto pb-24 px-4 py-6 scroll-smooth">
       <div className="max-w-2xl mx-auto space-y-6">
-        {messages.map((message, index) => (
+        {messages.map((message) => (
           message.role !== "system" && (
             <motion.div 
               key={message.id}

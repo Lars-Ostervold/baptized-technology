@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -24,7 +23,7 @@ export default function SupportPage() {
           <Heart className="h-12 w-12 text-primary mx-auto" />
           <h2 className="text-3xl font-bold">Coming Soon</h2>
           <p className="text-lg text-muted-foreground">
-            We're not currently accepting financial contributions while we're building our initial tools.
+            We&apos;re not currently accepting financial contributions while we&apos;re building our initial tools.
             Check back soon for ways to support this mission financially.
           </p>
           <p className="text-muted-foreground">

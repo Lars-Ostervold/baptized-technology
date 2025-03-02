@@ -64,7 +64,7 @@ export function ContactDialog({ children }: { children?: React.ReactNode }) {
         <DialogHeader>
           <DialogTitle>Get in Touch</DialogTitle>
           <DialogDescription>
-            Have questions about Baptized Technology? Send a message and I'll get back to you.
+            Have questions about Baptized Technology? Send a message and I&apos;ll get back to you.
           </DialogDescription>
         </DialogHeader>
         
@@ -75,7 +75,7 @@ export function ContactDialog({ children }: { children?: React.ReactNode }) {
             </div>
             <h3 className="text-lg font-medium">Message Sent!</h3>
             <p className="text-muted-foreground">
-              Thank you for reaching out. I'll respond as soon as possible.
+              Thank you for reaching out. I&apos;ll respond as soon as possible.
             </p>
             <Button 
               className="mt-4" 

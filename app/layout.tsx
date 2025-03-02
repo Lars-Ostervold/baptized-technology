@@ -1,7 +1,6 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
 import type { Metadata } from "next"
-import WaterBackground from "@/components/water-background"
 import Navbar from "@/components/navbar"
 import { SITE_IMAGE, SITE_URL, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_TITLE } from "@/lib/constants"
 

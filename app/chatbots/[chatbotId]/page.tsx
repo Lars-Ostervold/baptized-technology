@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: ChatbotPageProps): Promise<Me
       title: `${config.title} - Baptized Technology`,
       description: config.description,
     }
-  } catch (error) {
+  } catch {
     return {
       title: "Chatbot - Baptized Technology",
       description: "AI chatbot by Baptized Technology",
@@ -59,7 +59,7 @@ export default function ChatbotPage({ params }: ChatbotPageProps) {
         </div>
       </>
     )
-  } catch (error) {
+  } catch {
     return notFound()
   }
 }

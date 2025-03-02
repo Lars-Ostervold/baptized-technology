@@ -24,8 +24,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   })
 
   const handleExampleClick = (example: string) => {
-    handleInputChange({ target: { value: example } } as any)
-    handleSubmit({ preventDefault: () => {} } as any)
+    handleInputChange({ target: { value: example } } as React.ChangeEvent<HTMLInputElement>)
+    handleSubmit({ preventDefault: () => {} } as React.FormEvent)
   }
 
   return (

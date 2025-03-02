@@ -1,13 +1,10 @@
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { 
-  ArrowRight, 
+import {  
   BookOpen, 
   User, 
-  GitFork, 
-  HelpCircle, 
+  GitFork,  
   Heart,
   SendHorizonal
 } from "lucide-react"
@@ -33,11 +30,11 @@ export default function AboutPage() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold">Who We Are</h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Hi, I'm Lars—the sole developer behind Baptized Technology. This project emerged from my own 
+            Hi, I&apos;m Lars—the sole developer behind Baptized Technology. This project emerged from my own 
             journey with Scripture and my experiences with BibleProject and other transformative biblical resources.
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            At its core, Baptized Technology isn't about me. It's about Jesus. It's about creating tools 
+            At its core, Baptized Technology isn&apos;t about me. It&apos;s about Jesus. It&apos;s about creating tools 
             that lead people deeper into relationship with Him and drive them to action in bringing Shalom to the world.
           </p>
         </div>
@@ -46,7 +43,7 @@ export default function AboutPage() {
             <User className="h-12 w-12 text-primary" />
             <h3 className="text-xl font-semibold">A One-Person Mission</h3>
             <p className="text-muted-foreground">
-              While I'm the only one running this project, it exists to serve a much larger purpose—connecting 
+              While I&apos;m the only one running this project, it exists to serve a much larger purpose—connecting 
               people with the wisdom of Scripture and two millennia of Spirit-led biblical scholarship.
             </p>
           </div>
@@ -110,9 +107,9 @@ export default function AboutPage() {
               <AccordionTrigger>Where does the information come from?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground">
-                  Our tools only relay information from trusted, biblical sources that we've 
-                  specifically selected and trained them on. They don't generate their own theology 
-                  or draw from general internet knowledge. We're committed to sourcing wisdom from 
+                  Our tools only relay information from trusted, biblical sources that we&apos;ve 
+                  specifically selected and trained them on. They don&apos;t generate their own theology 
+                  or draw from general internet knowledge. We&apos;re committed to sourcing wisdom from 
                   reliable teachers and always pointing you back to those original resources.
                 </p>
               </AccordionContent>
@@ -130,10 +127,10 @@ export default function AboutPage() {
             </AccordionItem>
 
             <AccordionItem value="item-4">
-              <AccordionTrigger>What's the relationship with BibleProject?</AccordionTrigger>
+              <AccordionTrigger>What&apos;s the relationship with BibleProject?</AccordionTrigger>
               <AccordionContent>
                 <p className="text-muted-foreground">
-                  We deeply appreciate BibleProject's work and have been personally transformed by 
+                  We deeply appreciate BibleProject&apos;s work and have been personally transformed by 
                   their content. Some of our tools help you find and access BibleProject resources 
                   more efficiently, but Baptized Technology is an independent project not officially 
                   affiliated with BibleProject.
@@ -172,7 +169,7 @@ export default function AboutPage() {
       <section className="text-center space-y-8">
         <h2 className="text-3xl font-bold">Connect With Us</h2>
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Have questions or suggestions? I'd love to hear from you.
+          Have questions or suggestions? I&apos;d love to hear from you.
         </p>
         <ContactDialog>
             <Button size="lg" className="font-semibold">Get in Touch</Button>

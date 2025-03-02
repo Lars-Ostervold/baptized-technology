@@ -1,12 +1,8 @@
-import { OpenAI } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 
-// Use environment variable for API key
-const apiKey = process.env.OPENAI_API_KEY;
-
-// Throw a more helpful error if the API key is missing
-if (!apiKey) {
-  throw new Error("OPENAI_API_KEY is not defined in environment variables");
-}
-
-// Standard OpenAI client (for embeddings)
-export const openai = new OpenAI({ apiKey });
+// Create OpenAI client with the AI SDK
+// The apiKey will automatically default to the OPENAI_API_KEY environment variable
+export const openai = createOpenAI({
+  compatibility: "strict", // Use strict mode for the official OpenAI API
+  // The API key will automatically use OPENAI_API_KEY from environment variables
+});

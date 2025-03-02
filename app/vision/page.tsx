@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -29,7 +28,7 @@ export default function VisionPage() {
               experience that same beauty.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Even when resources exist, they're scattered and inaccessible in our moment of need.
+              Even when resources exist, they&apos;re scattered and inaccessible in our moment of need.
               What if there was a place where you could have the giants of faith help you experience
               the beauty of the Bible without spending hours combing through old podcasts or searching for books?
             </p>
@@ -52,7 +51,7 @@ export default function VisionPage() {
               <BookOpen className="h-10 w-10 text-primary" />
               <h3 className="text-xl font-semibold">Wisdom, Not Just Information</h3>
               <p className="text-muted-foreground">
-                Our tools don't generate knowledge from general sources. They relay the wisdom of trusted, biblical sources—the sages who've wrestled with Scripture before us.
+                Our tools don&apos;t generate knowledge from general sources. They relay the wisdom of trusted, biblical sources—the sages who&apos;ve wrestled with Scripture before us.
               </p>
             </CardContent>
           </Card>
@@ -61,7 +60,7 @@ export default function VisionPage() {
               <Heart className="h-10 w-10 text-primary" />
               <h3 className="text-xl font-semibold">Tools, Not Replacements</h3>
               <p className="text-muted-foreground">
-                These are tools that should drive people to Jesus. If they're not serving that mission, we don't want them. People need love, not AI—we pray these tools help you know Love more deeply.
+                These are tools that should drive people to Jesus. If they&apos;re not serving that mission, we don&apos;t want them. People need love, not AI—we pray these tools help you know Love more deeply.
               </p>
             </CardContent>
           </Card>
@@ -70,7 +69,7 @@ export default function VisionPage() {
               <Sparkles className="h-10 w-10 text-primary" />
               <h3 className="text-xl font-semibold">Doorways, Not Destinations</h3>
               <p className="text-muted-foreground">
-                There's value in searching for answers. We don't want to take away this experience, which is why we recommend sources. We want you to dive deeper.
+                There&apos;s value in searching for answers. We don&apos;t want to take away this experience, which is why we recommend sources. We want you to dive deeper.
               </p>
             </CardContent>
           </Card>
@@ -79,10 +78,10 @@ export default function VisionPage() {
 
       <section className="bg-muted/30 p-8 rounded-lg border border-border mb-20">
         <div className="space-y-6 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center">What We're Building</h2>
+          <h2 className="text-3xl font-bold text-center">What We&apos;re Building</h2>
           <p className="text-lg text-center text-muted-foreground">
             Imagine finding exactly what BibleProject said about a passage, instantly.
-            No more "I know they talked about this somewhere..."
+            No more &quot;I know they talked about this somewhere...&quot;
           </p>
           <ul className="space-y-4 text-lg">
             {[

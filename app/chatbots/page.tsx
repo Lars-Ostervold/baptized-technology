@@ -5,9 +5,9 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ChatbotCard } from "@/components/chatbot-card"
 import { 
-  Bot, Brain, BookOpen, Scroll, Library, BookMarked, 
-  ScrollText, PenTool, Calendar, MessageCircle, HelpCircle, 
-  GraduationCap, Church, Sparkles, Heart
+  Brain, Scroll, Library, BookMarked, 
+  PenTool, Calendar, MessageCircle, HelpCircle, 
+  Church, Heart
 } from "lucide-react"
 import { LoginDialog } from "@/components/auth/login-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
