@@ -9,8 +9,8 @@ import {
   PenTool, Calendar, MessageCircle, HelpCircle, 
   Church, Heart
 } from "lucide-react"
-import { LoginDialog } from "@/components/auth/login-dialog"
-import { useAuth } from "@/components/auth/auth-provider"
+// import { LoginDialog } from "@/components/auth/login-dialog"
+// import { useAuth } from "@/components/auth/auth-provider"
 import WaterBackground from "@/components/water-background"
 
 const chatbots = [
@@ -108,7 +108,7 @@ const chatbots = [
 ]
 
 export default function SolutionsPage() {
-  const { user } = useAuth()
+  // const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredChatbots = chatbots.filter(
@@ -128,12 +128,12 @@ export default function SolutionsPage() {
         </p>
       </div>
 
-      {!user && (
+      {/* {!user && (
         <div className="max-w-md mx-auto mb-8 p-4 bg-muted/50 rounded-lg text-center">
           <p className="text-sm text-muted-foreground mb-2">Want to save your chat history and preferences?</p>
           <LoginDialog />
         </div>
-      )}
+      )} */}
 
       {/* Search Bar */}
       <div className="relative max-w-md mx-auto mb-12">
