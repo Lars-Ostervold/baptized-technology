@@ -102,22 +102,28 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
   }
 
   const handleOAuthLogin = async (provider: "github" | "google" | "apple") => {
-    setError(null)
-    setIsLoading(true)
+    setError(null);
+    setIsLoading(true);
     
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-
-    if (error) {
-      setError(error.message)
-      setIsLoading(false)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+  
+      if (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+      // No need to close dialog or set isLoading to false as we're redirecting
+    } catch (err) {
+      console.error("OAuth login error:", err);
+      setError("An unexpected error occurred");
+      setIsLoading(false);
     }
-    // No need to close dialog or set isLoading to false here as we're redirecting
-  }
+  };
 
   const resetState = () => {
     setEmail("")
@@ -217,6 +223,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
             variant="outline"
             onClick={() => handleOAuthLogin("github")}
             disabled={isLoading}
+            className="flex items-center justify-center"
           >
             <Github className="h-4 w-4" />
             <span className="sr-only">GitHub</span>
@@ -225,6 +232,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
             variant="outline"
             onClick={() => handleOAuthLogin("google")}
             disabled={isLoading}
+            className="flex items-center justify-center"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -250,6 +258,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
             variant="outline"
             onClick={() => handleOAuthLogin("apple")}
             disabled={isLoading}
+            className="flex items-center justify-center"
           >
             <Apple className="h-4 w-4" />
             <span className="sr-only">Apple</span>
@@ -261,7 +270,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
           {view === 'login' ? (
             <>
               <Button variant="link" className="px-2 text-sm" onClick={() => setView('signup')}>
-                Don't have an account? Sign up
+                Don&apos;t have an account? Sign up
               </Button>
               <Button variant="link" className="px-2 text-sm" onClick={() => setView('magic-link')}>
                 Login with magic link
