@@ -2,6 +2,8 @@ import { openai } from '@/lib/openai'
 import { streamText } from 'ai'
 import { getChatbotConfig } from '@/lib/chatbot/config'
 
+export const runtime = "edge"
+
 export async function POST(req: Request, { params }: { params: { chatbotId: string } }) {
   try {
     // Parse the request body
@@ -10,15 +12,8 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     // Get chatbot configuration
     const config = getChatbotConfig(params.chatbotId)
     
-    // Log incoming request for debugging
-    console.log("Chat API request:", {
-      chatbotId: params.chatbotId,
-      messageCount: messages.length
-    })
-    
     // Ensure the system message matches the configuration
-    // eslint-disable-next-line prefer-const
-    let processedMessages = [...messages]
+    const processedMessages = [...messages]
     
     // Find and update system message if it exists
     const systemMessageIndex = processedMessages.findIndex(msg => msg.role === 'system')
@@ -31,15 +26,16 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
         content: config.systemPrompt
       })
     }
-    
-    // Create a result using AI SDK
+
+    // Create a streaming response using AI SDK
     const result = streamText({
-      model: openai('gpt-3.5-turbo'),
+      model: openai('gpt-4o-mini'),
       messages: processedMessages,
     })
-    
+
     // Return streaming response
     return result.toDataStreamResponse()
+    
   } catch (error) {
     console.error("Chat API error:", error)
     return new Response(

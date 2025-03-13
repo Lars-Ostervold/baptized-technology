@@ -1,20 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { nanoid } from 'nanoid'
 import { ChatMessages } from './chat-messages'
 import { ChatInput } from './chat-input'
 import { getChatbotConfig } from '@/lib/chatbot/config'
+import type { Source } from '@/lib/chatbot/types'
 
 export default function ChatInterface({ chatbotId = 'bibleproject' }) {  
   // Get the chatbot configuration based on the ID
   const config = getChatbotConfig(chatbotId)
+  const [sources, setSources] = useState<Source[]>([])
   
   const {
     messages,
     input,
     handleInputChange,
-    handleSubmit,
+    isLoading,
+    handleSubmit: originalHandleSubmit,
     status,
   } = useChat({
     api: `/api/chat/${chatbotId}`,
@@ -28,6 +32,67 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     handleSubmit({ preventDefault: () => {} } as React.FormEvent)
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Don't do anything if no input or already loading
+    if (!input.trim() || isLoading) return
+    
+    try {
+      // First, retrieve relevant sources
+      const sourcesResponse = await fetch(`/api/sources/${chatbotId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: input })
+      })
+      
+      const { sources: retrievedSources, contextText } = await sourcesResponse.json()
+
+      console.log("Retrieved sources:", retrievedSources)
+      
+      // Store sources for UI display
+      setSources(retrievedSources || [])
+      
+      // Create augmented user message with context if available
+      //eslint-disable-next-line prefer-const
+      let augmentedMessages = [...messages]
+      
+      // Add the user's new message
+      augmentedMessages.push({
+        id: nanoid(),
+        role: 'user',
+        content: input
+      })
+      
+      // If we have context, add it to the system message
+      if (contextText) {
+        // Find existing system message
+        const systemIndex = augmentedMessages.findIndex(msg => msg.role === 'system')
+        
+        if (systemIndex !== -1) {
+          // Replace system message with augmented version
+          augmentedMessages[systemIndex] = {
+            ...augmentedMessages[systemIndex],
+            content: `${config.systemPrompt}\n\nUse this information to answer the question. If the information doesn't contain the answer, use your general knowledge but acknowledge this.\n\nContext:\n${contextText}`
+          }
+        }
+      }
+      
+      // Submit to the chat API with updated messages
+      originalHandleSubmit(e, {
+        options: {
+          body: {
+            messages: augmentedMessages
+          }
+        }
+      })
+    } catch (error) {
+      console.error("Error fetching sources:", error)
+      // If source retrieval fails, still send the regular chat message
+      originalHandleSubmit(e)
+    }
+  }
+
   return (
     <div className="flex flex-col h-full w-full relative">
       {/* Main chat area with messages */}
@@ -38,6 +103,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
           welcomeMessage={config.welcomeMessage}
           examples={config.examples}
           onExampleClick={handleExampleClick}
+          sources={sources}
         />
       </div>
       

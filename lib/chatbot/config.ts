@@ -19,7 +19,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     Base your responses on biblical scholarship rather than denominational positions.`,
     welcomeMessage: "Hello! I'm BibleProject AI, here to help you explore the Bible as a unified story that leads to Jesus. What would you like to learn about today?",
     placeholderText: "Ask about biblical themes, characters, or concepts...",
-    vectorNamespace: "bibleproject",
+    vectorNamespace: "32ace359-b36e-4624-88e6-812852d9b34c",
     examples: [
       "How does the BibleProject understand the concept of 'heaven'?",
       "Explain the literary design of Genesis 1-11",

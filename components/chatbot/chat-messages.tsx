@@ -6,6 +6,8 @@ import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import type { Message } from '@ai-sdk/react'
+import type { Source } from '@/lib/chatbot/types'
+import { SourceCard } from '@/components/chatbot/source-card' // Import the new component
 
 // Define the status type similar to chat-input.tsx
 type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
@@ -17,6 +19,7 @@ interface ChatMessagesProps {
   welcomeMessage?: string
   examples?: string[]
   onExampleClick: (example: string) => void
+  sources?: Source[]
 }
 
 export function ChatMessages({ 
@@ -24,7 +27,8 @@ export function ChatMessages({
   status, 
   welcomeMessage = "Send a message to begin chatting with the AI assistant.", 
   examples = [], 
-  onExampleClick 
+  onExampleClick,
+  sources = []
 }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   
@@ -63,7 +67,7 @@ export function ChatMessages({
   return (
     <div className="flex-1 overflow-y-auto pb-24 px-4 py-6 scroll-smooth">
       <div className="max-w-2xl mx-auto space-y-6">
-        {messages.map((message) => (
+        {messages.map((message, i) => (
           message.role !== "system" && (
             <motion.div 
               key={message.id}
@@ -90,17 +94,32 @@ export function ChatMessages({
               </div>
               
               {/* Message bubble */}
-              <div className={cn(
-                "rounded-2xl px-4 py-3 max-w-[80%] shadow-sm",
-                message.role === "user" 
-                  ? "bg-blue-500 text-white dark:bg-blue-600" 
-                  : "bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
-              )}>
-                {message.content.split("\n").map((line, i) => (
-                  <p key={i} className={i > 0 ? "mt-2" : ""}>
-                    {line || "\u00A0"}
-                  </p>
-                ))}
+              <div className="flex flex-col space-y-2 max-w-[80%]">
+                <div className={cn(
+                  "rounded-2xl px-4 py-3 shadow-sm",
+                  message.role === "user" 
+                    ? "bg-blue-500 text-white dark:bg-blue-600" 
+                    : "bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
+                )}>
+                  {message.content.split("\n").map((line, i) => (
+                    <p key={i} className={i > 0 ? "mt-2" : ""}>
+                      {line || "\u00A0"}
+                    </p>
+                  ))}
+                </div>
+                
+                {/* Show sources for AI messages when they exist and it's the latest AI message */}
+                {message.role === "assistant" && 
+                 i === messages.length - 1 && 
+                 sources && 
+                 sources.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">Sources:</p>
+                    {sources.map((source) => (
+                      <SourceCard key={source.id} source={source} />
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           )
