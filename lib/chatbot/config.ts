@@ -2,6 +2,8 @@
 import { BookOpen, Code } from "lucide-react"
 import type { ChatbotConfig } from "./types"
 
+// vectorNameSpace is the id from 'chatbots' table in Supabase
+
 export const chatbotConfigs: Record<string, ChatbotConfig> = {
   "bibleproject": {
     id: "bibleproject",
@@ -19,7 +21,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     Base your responses on biblical scholarship rather than denominational positions.`,
     welcomeMessage: "Hello! I'm BibleProject AI, here to help you explore the Bible as a unified story that leads to Jesus. What would you like to learn about today?",
     placeholderText: "Ask about biblical themes, characters, or concepts...",
-    vectorNamespace: "32ace359-b36e-4624-88e6-812852d9b34c",
+    vectorNamespace: "538b7231-6ffc-4d0e-ac00-11ca01f4d091",
     examples: [
       "How does the BibleProject understand the concept of 'heaven'?",
       "Explain the literary design of Genesis 1-11",
