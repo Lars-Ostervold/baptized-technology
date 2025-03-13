@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search } from "lucide-react"
+import { Search, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ChatbotCard } from "@/components/chatbot-card"
 import { 
@@ -9,8 +9,8 @@ import {
   PenTool, Calendar, MessageCircle, HelpCircle, 
   Church, Heart
 } from "lucide-react"
-// import { LoginDialog } from "@/components/auth/login-dialog"
-// import { useAuth } from "@/components/auth/auth-provider"
+import { LoginDialog } from "@/components/auth/login-dialog"
+import { useAuth } from "@/components/auth/auth-provider"
 import WaterBackground from "@/components/water-background"
 
 const chatbots = [
@@ -108,7 +108,7 @@ const chatbots = [
 ]
 
 export default function SolutionsPage() {
-  // const { user } = useAuth()
+  const { user, loading } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredChatbots = chatbots.filter(
@@ -128,12 +128,25 @@ export default function SolutionsPage() {
         </p>
       </div>
 
-      {/* {!user && (
+      {loading ? (
+        <div className="max-w-md mx-auto mb-8 p-4 bg-muted/50 rounded-lg text-center">
+          <div className="flex justify-center items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <p className="text-sm text-muted-foreground">Checking authentication...</p>
+          </div>
+        </div>
+      ) : !user ? (
         <div className="max-w-md mx-auto mb-8 p-4 bg-muted/50 rounded-lg text-center">
           <p className="text-sm text-muted-foreground mb-2">Want to save your chat history and preferences?</p>
           <LoginDialog />
         </div>
-      )} */}
+      ) : (
+        <div className="max-w-md mx-auto mb-8 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg text-center">
+          <p className="text-sm text-green-600 dark:text-green-400">
+            Logged in as {user.email}. Your chat history will be saved.
+          </p>
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="relative max-w-md mx-auto mb-12">
