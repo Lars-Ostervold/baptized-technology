@@ -43,8 +43,6 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
       )
     }
 
-    console.log("Sources:", sources)
-    
     // Format sources for return
     const formattedSources: Source[] = sources ? sources.map((source: Source) => ({
       id: source.id,

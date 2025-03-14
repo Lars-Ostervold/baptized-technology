@@ -21,7 +21,7 @@ interface SourceCardProps {
 export function SourceCard({ source }: SourceCardProps) {
   // Choose icon based on source type
   const getSourceIcon = () => {
-    // console.log(source)
+
     const type = source.type;
     
     switch(type) {
