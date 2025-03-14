@@ -1,17 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { nanoid } from 'nanoid'
 import { ChatMessages } from './chat-messages'
 import { ChatInput } from './chat-input'
 import { getChatbotConfig } from '@/lib/chatbot/config'
 import type { Source } from '@/lib/chatbot/types'
+import { useAuth } from '@/components/auth/auth-provider'
+import ChatSidebar from './chat-sidebar'
+import type { ChatSession } from '@/lib/chatbot/types'
 
 export default function ChatInterface({ chatbotId = 'bibleproject' }) {  
   // Get the chatbot configuration based on the ID
   const config = getChatbotConfig(chatbotId)
   const [sources, setSources] = useState<Source[]>([])
+  const { user } = useAuth()
+  
+  // Chat session state
+  const [activeChatId, setActiveChatId] = useState<string | null>(null)
   
   const {
     messages,
@@ -20,16 +27,33 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     isLoading,
     handleSubmit: originalHandleSubmit,
     status,
+    setMessages,
   } = useChat({
     api: `/api/chat/${chatbotId}`,
     initialMessages: [
       { id: nanoid(), role: "system", content: config.systemPrompt }
-    ]
+    ],
+    id: activeChatId || undefined,
   })
 
   const handleExampleClick = (example: string) => {
     handleInputChange({ target: { value: example } } as React.ChangeEvent<HTMLInputElement>)
     handleSubmit({ preventDefault: () => {} } as React.FormEvent)
+  }
+
+  // Save chat messages to database
+  const saveChatMessages = async (chatId: string, messagesData: any[]) => {
+    try {
+      await fetch(`/api/chats/${chatId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: messagesData }),
+      })
+    } catch (error) {
+      console.error('Error saving chat messages:', error)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,6 +63,32 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     if (!input.trim() || isLoading) return
     
     try {
+      // If user is logged in but no active chat, create a new chat session
+      if (user && !activeChatId) {
+        try {
+          const response = await fetch('/api/chats', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: input.slice(0, 50), // Use first message as title
+              chatbotId: config.vectorNamespace,
+              messages: [
+                { id: nanoid(), role: 'system', content: config.systemPrompt }
+              ]
+            }),
+          })
+          
+          if (response.ok) {
+            const { id } = await response.json()
+            setActiveChatId(id)
+          }
+        } catch (error) {
+          console.error('Error creating chat session:', error)
+        }
+      }
+
       // First, retrieve relevant sources
       const sourcesResponse = await fetch(`/api/sources/${chatbotId}`, {
         method: 'POST',
@@ -47,19 +97,17 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       })
       
       const { sources: retrievedSources, contextText } = await sourcesResponse.json()
-
-      console.log("Retrieved sources:", retrievedSources)
       
       // Store sources for UI display
       setSources(retrievedSources || [])
       
       // Create augmented user message with context if available
-      //eslint-disable-next-line prefer-const
       let augmentedMessages = [...messages]
       
       // Add the user's new message
+      const userMessageId = nanoid()
       augmentedMessages.push({
-        id: nanoid(),
+        id: userMessageId,
         role: 'user',
         content: input
       })
@@ -86,6 +134,31 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
           }
         }
       })
+      
+        // If user is logged in and we have an active chat ID, save the messages
+      if (user && activeChatId) {
+        // We need to wait for the AI response before saving
+        setTimeout(() => {
+          if (messages.length > 0) {
+            // Update chat with all messages
+            fetch(`/api/chats/${activeChatId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                messages: messages.map(msg => ({
+                  id: msg.id,
+                  role: msg.role,
+                  content: msg.content,
+                }))
+              }),
+            }).catch(error => {
+              console.error('Error updating chat messages:', error)
+            })
+          }
+        }, 3000) // Give some time for the AI to respond
+      }
     } catch (error) {
       console.error("Error fetching sources:", error)
       // If source retrieval fails, still send the regular chat message
@@ -94,7 +167,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   }
 
   return (
-    <div className="flex flex-col h-full w-full relative">
+    <div className="flex h-full w-full relative">
       {/* Main chat area with messages */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <ChatMessages 

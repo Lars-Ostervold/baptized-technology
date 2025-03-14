@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Github, Mail, Apple, Loader2, AlertCircle, ArrowRight, X } from "lucide-react"
-import { supabase } from "@/lib/supabase"
-import { Google } from "./provider-icons" // We'll create this component for the Google icon
+// import { Google } from "./provider-icons" // We'll create this component for the Google icon
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useRouter } from "next/navigation"
+import { createClient } from "@/utils/supabase/client"
 
 interface LoginDialogProps {
   trigger?: React.ReactNode;
@@ -25,6 +25,9 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'login' | 'signup' | 'magic-link'>('login')
   const router = useRouter()
+
+  // Create Supabase client using the new SSR client
+  const supabase = createClient()
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()

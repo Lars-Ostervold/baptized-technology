@@ -52,13 +52,16 @@ export type Source = {
   }
 }
 
-export type ChatSession = {
+export interface ChatSession {
   id: string
   title: string
-  messages: Message[]
-  createdAt: Date
-  updatedAt: Date
+  user_id: string
+  chatbot_id: string
+  created_at: string
+  updated_at: string
 }
+
+export type { Message }
 
 export type ChatbotConfig = {
   id: string
