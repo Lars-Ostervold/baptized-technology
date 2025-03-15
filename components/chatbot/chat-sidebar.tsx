@@ -1,136 +1,158 @@
-// Update to chat-sidebar.tsx
-import { PlusCircle, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ChatSession } from "@/lib/chatbot/types"
-import { formatDistanceToNow } from 'date-fns'
-import { useState } from "react"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/components/auth/auth-provider'
+import { PlusCircle, Loader2, History, CalendarDays } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { format, isToday, isYesterday } from 'date-fns'
 
 interface ChatSidebarProps {
-  chatSessions: ChatSession[]
   activeChatId: string | null
-  onSelectChat: (id: string) => void
+  onChatSelected: (chatId: string) => void
   onNewChat: () => void
-  isLoading: boolean
+  chatbotId: string
+  refreshTrigger?: number
 }
 
-export default function ChatSidebar({
-  chatSessions,
-  activeChatId,
-  onSelectChat,
+interface ChatSession {
+  id: string
+  title: string
+  user_id: string
+  chatbot_id: string
+  messages: {
+    id: string;
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+  }[]
+  created_at: string
+  updated_at: string
+}
+
+export default function ChatSidebar({ 
+  activeChatId, 
+  onChatSelected, 
   onNewChat,
-  isLoading
+  chatbotId,
+  refreshTrigger = 0
 }: ChatSidebarProps) {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [chatToDelete, setChatToDelete] = useState<string | null>(null)
+  const { user } = useAuth()
+  const [chats, setChats] = useState<ChatSession[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   
-  const handleDeleteChat = async () => {
-    if (!chatToDelete) return
+  // Fetch chat history when the component mounts
+  useEffect(() => {
+    if (user) {
+      fetchChats()
+    }
+  }, [user, refreshTrigger])
+  
+  const fetchChats = async () => {
+    setIsLoading(true)
+    setError("")
     
     try {
-      const response = await fetch(`/api/chats/${chatToDelete}`, {
-        method: 'DELETE',
-      })
+      const response = await fetch('/api/chats')
       
-      if (response.ok) {
-        // If we're deleting the active chat, create a new one
-        if (chatToDelete === activeChatId) {
-          onNewChat()
-        }
-        
-        // Refresh the chat list (this will be handled by the parent component)
-        window.location.reload()
+      if (!response.ok) {
+        throw new Error('Failed to fetch chat history')
       }
-    } catch (error) {
-      console.error('Error deleting chat:', error)
+      
+      const data = await response.json()
+      setChats(data.filter((chat: ChatSession) => chat.chatbot_id === chatbotId))
+    } catch (err) {
+      setError("Error loading chat history")
+      console.error(err)
+    } finally {
+      setIsLoading(false)
     }
-    
-    setChatToDelete(null)
-    setDeleteDialogOpen(false)
   }
   
-  const openDeleteDialog = (e: React.MouseEvent, chatId: string) => {
-    e.stopPropagation()
-    setChatToDelete(chatId)
-    setDeleteDialogOpen(true)
+  // Group chats by date
+  const groupedChats = chats.reduce<Record<string, ChatSession[]>>((groups, chat) => {
+    const date = new Date(chat.updated_at)
+    const dateKey = format(date, 'yyyy-MM-dd')
+    
+    if (!groups[dateKey]) {
+      groups[dateKey] = []
+    }
+    
+    groups[dateKey].push(chat)
+    return groups
+  }, {})
+
+  // Format date for display
+  const formatDateHeading = (dateKey: string) => {
+    const date = new Date(dateKey);
+    if (isToday(date)) return "Today";
+    if (isYesterday(date)) return "Yesterday";
+    return format(date, 'MMMM d, yyyy');
+  }
+
+  if (!user) {
+    return null
   }
   
   return (
-    <div className="w-64 bg-muted/20 h-full flex flex-col">
-      <div className="p-4">
-        <Button onClick={onNewChat} className="w-full flex items-center justify-center gap-2">
-          <PlusCircle className="h-4 w-4" />
+    <div className="w-64 h-full bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col">
+      {/* Header with New Chat button */}
+      <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+        <Button 
+          onClick={onNewChat} 
+          variant="outline" 
+          className="w-full justify-start gap-2"
+        >
+          <PlusCircle size={16} />
           New Chat
         </Button>
       </div>
       
+      {/* Chat history list */}
       <div className="flex-1 overflow-y-auto p-2">
         {isLoading ? (
           <div className="flex justify-center p-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            <Loader2 className="h-4 w-4 animate-spin" />
           </div>
-        ) : chatSessions.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground p-4">
+        ) : error ? (
+          <div className="text-sm text-red-500 p-4">
+            {error}
+          </div>
+        ) : chats.length === 0 ? (
+          <div className="flex flex-col items-center text-sm text-slate-500 dark:text-slate-400 p-4 text-center mt-8">
+            <History className="h-10 w-10 mb-2 opacity-50" />
             No chat history yet
-          </p>
-        ) : (
-          <div className="space-y-1">
-            {chatSessions.map((session) => (
-              <div
-                key={session.id}
-                className={`w-full text-left px-3 py-2 text-sm rounded-md flex items-center group ${
-                  activeChatId === session.id
-                    ? "bg-primary/10 font-medium"
-                    : "hover:bg-primary/5"
-                }`}
-              >
-                <button
-                  onClick={() => onSelectChat(session.id)}
-                  className="flex-1 text-left truncate flex flex-col"
-                >
-                  <span className="truncate">{session.title}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
-                  </span>
-                </button>
-                <button 
-                  onClick={(e) => openDeleteDialog(e, session.id)}
-                  className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
           </div>
+        ) : (
+          // Group chats by date
+          Object.entries(groupedChats).sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime()).map(([dateKey, dateChats]) => (
+            <div key={dateKey} className="mb-4">
+              <div className="flex items-center gap-1 px-2 mb-1">
+                <CalendarDays size={12} className="text-slate-400" />
+                <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  {formatDateHeading(dateKey)}
+                </h3>
+              </div>
+              <div className="space-y-1">
+                {dateChats.map(chat => (
+                  <button
+                    key={chat.id}
+                    onClick={() => onChatSelected(chat.id)}
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded text-sm transition-colors truncate",
+                      chat.id === activeChatId 
+                        ? "bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+                    )}
+                  >
+                    {chat.title || "Untitled Chat"}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
         )}
       </div>
-      
-      {/* Delete confirmation dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete this chat conversation.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteChat} className="bg-destructive text-destructive-foreground">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

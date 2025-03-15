@@ -53,12 +53,17 @@ export type Source = {
 }
 
 export interface ChatSession {
-  id: string
-  title: string
-  user_id: string
-  chatbot_id: string
-  created_at: string
-  updated_at: string
+  id: string;
+  title: string;
+  user_id: string;
+  chatbot_id: string;
+    messages: {
+      id: string;
+      role: 'system' | 'user' | 'assistant';
+      content: string;
+    }[];
+  created_at: string;
+  updated_at: string;
 }
 
 export type { Message }

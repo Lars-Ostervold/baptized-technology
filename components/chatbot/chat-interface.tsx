@@ -9,7 +9,9 @@ import { getChatbotConfig } from '@/lib/chatbot/config'
 import type { Source } from '@/lib/chatbot/types'
 import { useAuth } from '@/components/auth/auth-provider'
 import ChatSidebar from './chat-sidebar'
-import type { ChatSession } from '@/lib/chatbot/types'
+import { Menu } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
 
 export default function ChatInterface({ chatbotId = 'bibleproject' }) {  
   // Get the chatbot configuration based on the ID
@@ -18,6 +20,10 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const { user } = useAuth()
   // Chat session state
   const [activeChatId, setActiveChatId] = useState<string | null>(null)
+  const [isMobileView] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
+
 
   const {
     messages,
@@ -64,6 +70,40 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     setPreviousStatus(status)
   }, [status, messages, user, activeChatId, previousStatus])
 
+  const handleChatSelected = async (chatId: string) => {
+    setActiveChatId(chatId)
+    
+    try {
+      const response = await fetch(`/api/chats/${chatId}`)
+      
+      if (response.ok) {
+        const chatData = await response.json()
+        
+        // Reset the chat with the loaded messages
+        if (chatData.messages && chatData.messages.length > 0) {
+          setMessages(chatData.messages)
+        }
+      }
+    } catch (error) {
+      console.error('Error loading chat:', error)
+    }
+  }
+
+  const handleNewChat = () => {
+    // Clear the current messages except system message
+    setMessages([
+      { id: nanoid(), role: "system", content: config.systemPrompt }
+    ])
+    
+    // Clear active chat ID
+    setActiveChatId(null)
+    
+    // On mobile, close the sidebar after selecting new chat
+    if (isMobileView) {
+      setSidebarOpen(false)
+    }
+  }
+
 
   const handleExampleClick = (example: string) => {
     handleInputChange({ target: { value: example } } as React.ChangeEvent<HTMLInputElement>)
@@ -97,6 +137,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
           if (response.ok) {
             const { id } = await response.json()
             setActiveChatId(id)
+            setRefreshChatTrigger(prev => prev + 1)
           }
         } catch (error) {
           console.error('Error creating chat session:', error)
@@ -158,8 +199,33 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
 
   return (
     <div className="flex h-full w-full relative">
+      {/* Mobile sidebar toggle */}
+      {user && isMobileView && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute top-2 left-2 z-20 md:hidden"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <Menu size={18} />
+        </Button>
+      )}
+      
+      {/* Sidebar for chat history */}
+      {user && ((!isMobileView) || sidebarOpen) && (
+        <div className={`${isMobileView ? "absolute z-10 h-full" : ""}`}>
+          <ChatSidebar 
+            activeChatId={activeChatId}
+            onChatSelected={handleChatSelected}
+            onNewChat={handleNewChat}
+            chatbotId={config.vectorNamespace}
+            refreshTrigger={refreshChatTrigger}
+          />
+        </div>
+      )}
+      
       {/* Main chat area with messages */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className={`flex-1 flex flex-col h-full overflow-hidden ${user && !isMobileView ? "ml-0" : ""}`}>
         <ChatMessages 
           messages={messages} 
           status={status} 
