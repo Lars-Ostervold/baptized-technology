@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { nanoid } from 'nanoid'
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
+
     // Initialize Supabase using your utility function
     const supabase = await createClient()
     

@@ -86,7 +86,7 @@ export default async function ServerAuthComponent() {
                 <div>
                   <p className="font-medium">Expires At:</p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(session.expires_at * 1000).toLocaleString()}
+                    {session.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : "N/A"}
                   </p>
                 </div>
                 <div>

@@ -6,8 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Github, Mail, Apple, Loader2, AlertCircle, ArrowRight, X } from "lucide-react"
-// import { Google } from "./provider-icons" // We'll create this component for the Google icon
+import { Github, Apple, Loader2, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"

@@ -19,8 +19,11 @@ export default function ChatbotHeader({ title, iconName, iconColor }: ChatbotHea
   
   // Dynamically get the icon component from the name
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const IconComponent = (LucideIcons as Record<string, React.FC<any>>)[iconName] || LucideIcons.HelpCircle
-
+  const IconComponent = iconName && typeof iconName === 'string' && iconName in LucideIcons 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ? (LucideIcons as any)[iconName] as React.FC<any>
+  : LucideIcons.HelpCircle
+  
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {

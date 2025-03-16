@@ -13,7 +13,7 @@ import { LoginDialog } from "@/components/auth/login-dialog"
 export default function ClientAuthComponent() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [sessionDetails, setSessionDetails] = useState<Record<string, any> | null>(null)
+  const [sessionDetails, setSessionDetails] = useState<Record<string, string | number> | null>(null)
   
   // Create supabase client using the new client creator
   const supabase = createClient()
@@ -29,7 +29,7 @@ export default function ClientAuthComponent() {
       if (session) {
         // Get session details without sensitive info
         const sessionInfo = {
-          expires_at: new Date(session.expires_at * 1000).toLocaleString(),
+          expires_at: session.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : 'N/A',
           last_refreshed: new Date().toLocaleString(),
           provider: session.user.app_metadata.provider || 'unknown',
           user_id: session.user.id,
@@ -64,6 +64,7 @@ export default function ClientAuthComponent() {
     )
 
     return () => subscription.unsubscribe()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   return (

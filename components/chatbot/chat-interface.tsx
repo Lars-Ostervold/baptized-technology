@@ -157,14 +157,15 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       setSources(retrievedSources || [])
       
       // Create augmented user message with context if available
-      let augmentedMessages = [...messages]
+      const augmentedMessages = [...messages]
       
       // Add the user's new message
       const userMessageId = nanoid()
       augmentedMessages.push({
         id: userMessageId,
         role: 'user',
-        content: input
+        content: input,
+        parts: [{ type: 'text', text: input }]
       })
       
       // If we have context, add it to the system message
@@ -183,10 +184,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       
       // Submit to the chat API with updated messages
       originalHandleSubmit(e, {
-        options: {
-          body: {
-            messages: augmentedMessages
-          }
+        body: {
+          messages: augmentedMessages
         }
       })
       

@@ -46,6 +46,7 @@ export default function ChatSidebar({
     if (user) {
       fetchChats()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, refreshTrigger])
   
   const fetchChats = async () => {
