@@ -8,6 +8,7 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   keywords: SITE_KEYWORDS,
