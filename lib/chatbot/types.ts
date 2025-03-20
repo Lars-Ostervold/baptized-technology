@@ -81,4 +81,5 @@ export type ChatbotConfig = {
   placeholderText: string
   vectorNamespace: string
   examples?: string[]
+  comingSoon?: boolean
 }

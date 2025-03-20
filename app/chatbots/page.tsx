@@ -4,108 +4,21 @@ import { useState } from "react"
 import { Search, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ChatbotCard } from "@/components/chatbot-card"
-import { 
-  Brain, Scroll, Library, BookMarked, 
-  PenTool, Calendar, MessageCircle, HelpCircle, 
-  Church, Heart
-} from "lucide-react"
 import { LoginDialog } from "@/components/auth/login-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import WaterBackground from "@/components/water-background"
+import { chatbotConfigs } from "@/lib/chatbot/config";
 
-const chatbots = [
-  {
-    title: "BibleProject",
-    description:
-      "An AI companion for Bible study and theological exploration. Provides insights, summaries, and explanations of biblical themes and concepts.",
-    icon: Scroll,
-    category: "Podcasts",
-    href: "/chatbots/bibleproject",
-    gradient: "from-blue-500/10 to-cyan-500/10",
-    iconColor: "text-blue-500",
-  },
-  {
-    title: "John Mark Comer",
-    description: "Chatbot inspired by John Mark Comer, providing insights on spiritual formation and cultural commentary.",
-    icon: Heart,
-    category: "Spiritual Formation",
-    href: "/chatbots/johnMarkComer",
-    gradient: "from-green-500/10 to-teal-500/10",
-    iconColor: "text-green-500",
-  },
-  {
-    title: "Dallas Willard",
-    description: "Chatbot inspired by Dallas Willard, offering wisdom on spiritual disciplines and Christian philosophy.",
-    icon: Brain,
-    category: "Christian Philosophy",
-    href: "/chatbots/dallasWillard",
-    gradient: "from-yellow-500/10 to-orange-500/10",
-    iconColor: "text-yellow-500",
-  },
-  {
-    title: "CS Lewis",
-    description: "Chatbot inspired by CS Lewis, discussing theology, literature, and apologetics.",
-    icon: BookMarked,
-    category: "Theology & Literature",
-    href: "/chatbots/csLewis",
-    gradient: "from-red-500/10 to-pink-500/10",
-    iconColor: "text-red-500",
-  },
-  {
-    title: "Tim Keller",
-    description: "Chatbot inspired by Tim Keller, providing insights on urban ministry, apologetics, and cultural engagement.",
-    icon: Church,
-    category: "Urban Ministry",
-    href: "/chatbots/timKeller",
-    gradient: "from-purple-500/10 to-indigo-500/10",
-    iconColor: "text-purple-500",
-  },
-  {
-    title: "AI Book Summaries",
-    description: "Chatbot that lets you have a conversation about books, ask for key passages, and more.",
-    icon: Library,
-    category: "Book Summaries",
-    href: "/chatbots/aiBookSummaries",
-    gradient: "from-teal-500/10 to-blue-500/10",
-    iconColor: "text-teal-500",
-  },
-  {
-    title: "PsalmBot",
-    description: "Chatbot that breaks down the poetry of Psalms, explaining conventions and symbols.",
-    icon: PenTool,
-    category: "Biblical Poetry",
-    href: "/chatbots/psalmBot",
-    gradient: "from-orange-500/10 to-yellow-500/10",
-    iconColor: "text-orange-500",
-  },
-  {
-    title: "Study Plan Bot",
-    description: "Chatbot that creates study plans based on a topic or book and a timeframe, including deeper resources.",
-    icon: Calendar,
-    category: "Study Plans",
-    href: "/chatbots/studyPlanBot",
-    gradient: "from-pink-500/10 to-red-500/10",
-    iconColor: "text-pink-500",
-  },
-  {
-    title: "WWJDIHWM",
-    description: "Chatbot that contextualizes Jesus' teachings in your life, using a reasoning model.",
-    icon: MessageCircle,
-    category: "Contextual Theology",
-    href: "/chatbots/wwjdiHwm",
-    gradient: "from-indigo-500/10 to-purple-500/10",
-    iconColor: "text-indigo-500",
-  },
-  {
-    title: "GotQuestions Bot",
-    description: "Chatbot using information from gotquestions.org to answer burning questions about the Bible and philosophy.",
-    icon: HelpCircle,
-    category: "Biblical Answers",
-    href: "/chatbots/gotQuestionsBot",
-    gradient: "from-cyan-500/10 to-blue-500/10",
-    iconColor: "text-cyan-500",
-  },
-]
+const chatbots = Object.values(chatbotConfigs).map(config => ({
+  title: config.title,
+  description: config.description,
+  icon: config.icon,
+  category: config.category,
+  href: `/chatbots/${config.id}`,
+  gradient: config.gradient,
+  iconColor: config.iconColor,
+  comingSoon: config.comingSoon,
+}));
 
 export default function SolutionsPage() {
   const { user, loading } = useAuth()
