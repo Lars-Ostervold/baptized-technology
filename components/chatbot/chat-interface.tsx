@@ -186,10 +186,17 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         const systemIndex = augmentedMessages.findIndex(msg => msg.role === 'system')
         
         if (systemIndex !== -1) {
-          // Replace system message with augmented version
+          // Add instructions for citation format to the system message
           augmentedMessages[systemIndex] = {
             ...augmentedMessages[systemIndex],
-            content: `${config.systemPrompt}\n\nUse this information to answer the question. If the information doesn't contain the answer, use your general knowledge but acknowledge this.\n\nContext:\n${contextText}`
+            content: `${config.systemPrompt}
+            
+Use this information to answer the question. If the information doesn't contain the answer, use your general knowledge but acknowledge this.
+
+IMPORTANT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${retrievedSources.length} sources available.
+
+Context:
+${contextText}`
           }
         }
       }

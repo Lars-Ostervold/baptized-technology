@@ -12,15 +12,13 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     // Get chatbot configuration
     const config = getChatbotConfig(params.chatbotId)
     
-    // Ensure the system message matches the configuration
+    // Use the messages as provided without replacing the system message
+    // This preserves the enhanced system message with citation instructions
     const processedMessages = [...messages]
     
-    // Find and update system message if it exists
-    const systemMessageIndex = processedMessages.findIndex(msg => msg.role === 'system')
-    if (systemMessageIndex !== -1) {
-      processedMessages[systemMessageIndex].content = config.systemPrompt
-    } else {
-      // Add system message if it doesn't exist
+    // Only add a system message if one doesn't exist
+    const hasSystemMessage = processedMessages.some(msg => msg.role === 'system')
+    if (!hasSystemMessage) {
       processedMessages.unshift({
         role: 'system',
         content: config.systemPrompt
