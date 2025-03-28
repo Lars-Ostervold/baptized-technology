@@ -19,6 +19,18 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
       )
     }
     
+    // Check if the query is relevant to the chatbot's domain
+    const isRelevant = await isQueryRelevant(text, params.chatbotId)
+    
+    if (!isRelevant) {
+      return NextResponse.json({
+        sources: [],
+        contextText: "",
+        enhancedQuery: text,
+        isOffTopic: true
+      })
+    }
+    
     // Get chatbot configuration
     const config = getChatbotConfig(params.chatbotId)
     
@@ -212,4 +224,25 @@ async function rerankSources(query: string, sources: Source[]): Promise<Source[]
   
   // Reorder sources by rank
   return rankedIndices.map(index => sources[index])
+}
+
+// Helper function to check if a query is relevant to the chatbot's domain
+async function isQueryRelevant(query: string, chatbotId: string): Promise<boolean> {
+  const config = getChatbotConfig(chatbotId)
+  
+  const { text } = await generateText({
+    model: openai.chat("gpt-4o-mini"),
+    messages: [
+      {
+        role: "system",
+        content: `You are a query relevance checker. Your job is to determine if a query is relevant to the chatbot's domain. The chatbot is configured with the following system prompt: "${config.systemPrompt}". Return ONLY "true" or "false" based on whether the query is relevant to this domain.`
+      },
+      {
+        role: "user",
+        content: `Is this query relevant to the chatbot's domain? Query: "${query}"`
+      }
+    ],
+  })
+
+  return text.trim().toLowerCase() === "true"
 }

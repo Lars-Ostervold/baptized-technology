@@ -205,7 +205,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         })
       })
       
-      const { sources: retrievedSources, contextText, enhancedQuery } = await sourcesResponse.json()
+      const { sources: retrievedSources, contextText, enhancedQuery, isOffTopic } = await sourcesResponse.json()
       
       // Store sources for the upcoming message
       setCurrentMessageSources(retrievedSources || [])
@@ -222,8 +222,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         parts: [{ type: 'text', text: input }]
       })
       
-      // If we have context, add it to the system message
-      if (contextText) {
+      // If we have context and the query is not off-topic, add it to the system message
+      if (contextText && !isOffTopic) {
         // Find existing system message
         const systemIndex = augmentedMessages.findIndex(msg => msg.role === 'system')
         
