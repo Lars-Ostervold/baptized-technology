@@ -22,30 +22,29 @@ interface SourceCardProps {
 export function SourceCard({ source }: SourceCardProps) {
   // Choose icon based on source type
   const getSourceIcon = () => {
-
     const type = source.type;
     
     switch(type) {
       case 'book':
-        return <Book className="h-4 w-4" />;
+        return <Book className="h-6 w-6" />;
       case 'podcast':
-        return <Podcast className="h-4 w-4" />;
+        return <Podcast className="h-6 w-6" />;
       case 'video':
-        return <Video className="h-4 w-4" />;
+        return <Video className="h-6 w-6" />;
       case 'bible':
-        return <BookOpen className="h-4 w-4" />;
+        return <BookOpen className="h-6 w-6" />;
       case 'article':
-        return <FileTextIcon className="h-4 w-4" />;
+        return <FileTextIcon className="h-6 w-6" />;
       case 'blog':
-        return <MessageSquare className="h-4 w-4" />;
+        return <MessageSquare className="h-6 w-6" />;
       case 'website':
-        return <Globe className="h-4 w-4" />;
+        return <Globe className="h-6 w-6" />;
       case 'speech':
-        return <Mic className="h-4 w-4" />;
+        return <Mic className="h-6 w-6" />;
       case 'research_paper':
-        return <ScrollText className="h-4 w-4" />;
+        return <ScrollText className="h-6 w-6" />;
       default:
-        return <FileText className="h-4 w-4" />;
+        return <FileText className="h-6 w-6" />;
     }
   };
   // Helper function to format timestamps
@@ -158,27 +157,24 @@ export function SourceCard({ source }: SourceCardProps) {
   };
 
   return (
-    <Card className="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700">
-      <CardContent className="p-3 flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          {getSourceIcon()}
-          <span className="text-sm font-medium">{source.title}</span>
+    <Card 
+      className="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+      onClick={() => source.url && window.open(source.url, '_blank', 'noopener,noreferrer')}
+    >
+      <CardContent className="p-3">
+        <div className="flex gap-2">
+          <div className="flex-shrink-0 flex items-center">
+            {getSourceIcon()}
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-medium">{source.title}</span>
+            {formatMetadata() && (
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {formatMetadata()}
+              </p>
+            )}
+          </div>
         </div>
-        {formatMetadata() && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            {formatMetadata()}
-          </p>
-        )}
-        {source.url && (
-          <a 
-            href={source.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 mt-1"
-          >
-            <LinkIcon size={12} /> View source
-          </a>
-        )}
       </CardContent>
     </Card>
   );
