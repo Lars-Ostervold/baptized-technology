@@ -9,7 +9,7 @@ type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 're
 // Define props interface
 interface ChatInputProps {
   input: string
-  handleInputChange: (e: ChangeEvent<HTMLInputElement>) => void
+  handleInputChange: (e: ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: (e: FormEvent) => void
   status: ChatStatus
   placeholder?: string
@@ -23,15 +23,23 @@ export function ChatInput({
   placeholder = "Type your message..." 
 }: ChatInputProps) {
   // Properly type the ref
-  const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isReady = status !== 'streaming' && status !== 'submitted'
   
   // Focus input on mount and when status changes to ready
   useEffect(() => {
-    if (isReady && inputRef.current) {
-      inputRef.current.focus()
+    if (isReady && textareaRef.current) {
+      textareaRef.current.focus()
     }
   }, [isReady])
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+    }
+  }, [input])
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -44,29 +52,36 @@ export function ChatInput({
   const clearInput = () => {
     const event = { 
       target: { value: '' } 
-    } as ChangeEvent<HTMLInputElement>
+    } as ChangeEvent<HTMLTextAreaElement>
     handleInputChange(event)
   }
 
   return (
     <form onSubmit={onSubmit} className="relative">
       <div className="relative">
-        <input
-          ref={inputRef}
-          type="text"
+        <textarea
+          ref={textareaRef}
           value={input}
           onChange={handleInputChange}
           placeholder={placeholder}
           disabled={!isReady}
+          rows={1}
           className={cn(
-            "w-full py-3 pl-4 pr-14 rounded-full border border-slate-200",
-            "dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-            "transition-all duration-200",
+            "w-full py-2.5 pl-4 pr-24 rounded-full border-none",
+            "dark:bg-slate-800 dark:text-slate-100",
+            "focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
+            "outline-none ring-0 ring-offset-0 box-border",
+            "transition-all duration-200 resize-none overflow-hidden",
+            "leading-6 flex items-center",
             isReady 
               ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white" 
               : "bg-slate-50 dark:bg-slate-900 text-slate-400 cursor-not-allowed"
           )}
+          style={{ 
+            minHeight: '44px',
+            lineHeight: '1.5rem',
+            paddingTop: '10px'
+          }}
         />
         
         {/* Clear input button - only shows when there's text */}
@@ -74,7 +89,7 @@ export function ChatInput({
           <button
             type="button"
             onClick={clearInput}
-            className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1"
+            className="absolute right-14 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1"
           >
             <X size={16} />
           </button>

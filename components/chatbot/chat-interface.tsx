@@ -284,8 +284,8 @@ ${contextText}`
         </div>
       )}
       
-      {/* Main chat area with messages */}
-      <div className={`flex-1 flex flex-col h-full overflow-hidden ${user && !isMobileView ? "ml-0" : ""}`}>
+      {/* Main chat area with messages and input */}
+      <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${user && !isMobileView ? "ml-0" : ""}`}>
         <ChatMessages 
           messages={messagesWithSources} 
           status={status} 
@@ -293,19 +293,19 @@ ${contextText}`
           examples={config.examples}
           onExampleClick={handleExampleClick}
         />
-      </div>
-      
-      {/* Floating input at bottom */}
-      <div className="absolute bottom-6 left-0 right-0 px-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-200 ring-1 ring-slate-200 dark:ring-slate-700">
-            <ChatInput 
-              input={input}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-              status={status}
-              placeholder={config.placeholderText}
-            />
+        
+        {/* Floating input at bottom */}
+        <div className="absolute bottom-6 left-0 right-0 px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 ring-1 ring-slate-200 dark:ring-slate-700 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-0">
+              <ChatInput 
+                input={input}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                status={status}
+                placeholder={config.placeholderText}
+              />
+            </div>
           </div>
         </div>
       </div>
