@@ -5,11 +5,12 @@ import {
   FileText, 
   Link as LinkIcon, 
   BookOpen, 
-  Newspaper, 
+  FileTextIcon,
+  ScrollText,
   MessageSquare, 
   Globe, 
   Mic, 
-  ScrollText 
+  Newspaper
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Source } from '@/lib/chatbot/types';
@@ -34,7 +35,7 @@ export function SourceCard({ source }: SourceCardProps) {
       case 'bible':
         return <BookOpen className="h-4 w-4" />;
       case 'article':
-        return <Newspaper className="h-4 w-4" />;
+        return <FileTextIcon className="h-4 w-4" />;
       case 'blog':
         return <MessageSquare className="h-4 w-4" />;
       case 'website':
@@ -76,6 +77,15 @@ export function SourceCard({ source }: SourceCardProps) {
     const type = source.type;
     const details = [];
     
+    // Add content type as first piece of information
+    const formatType = (type: string) => {
+      return type.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+    
+    details.push(formatType(type));
+    
     // Common fields that might appear in multiple types
     if (source.metadata.author) details.push(`By ${source.metadata.author}`);
     
@@ -84,20 +94,20 @@ export function SourceCard({ source }: SourceCardProps) {
       case 'book':
         if (source.metadata.publisher) details.push(source.metadata.publisher);
         if (source.metadata.publication_year) details.push(`(${source.metadata.publication_year})`);
-        if (source.metadata.page) details.push(`Page: ${source.metadata.page}`);
+        if (source.metadata.page) details.push(`Page ${source.metadata.page}`);
         if (source.metadata.isbn) details.push(`ISBN: ${source.metadata.isbn}`);
         break;
         
       case 'podcast':
-        if (source.metadata.episode_title) details.push(`"${source.metadata.episode_title}"`);
-        if (source.metadata.episode_number) details.push(`Episode ${source.metadata.episode_number}`);
+        if (source.metadata.episode_number) details.push(`${source.metadata.episode_number}`);
         if (source.metadata.timestamp) {
-          details.push(`Timestamp: ${formatTimestamp(source.metadata.timestamp)}`);
+          details.push(`Timestamp for Source: ${formatTimestamp(source.metadata.timestamp)}`);
         }
         break;
         
       case 'article':
-        if (source.metadata.publication_date) {
+      if (source.metadata.page) details.push(`Page ${source.metadata.page}`);
+      if (source.metadata.publication_date) {
           const date = new Date(source.metadata.publication_date);
           details.push(date.toLocaleDateString());
         }
@@ -106,7 +116,7 @@ export function SourceCard({ source }: SourceCardProps) {
       case 'video':
         if (source.metadata.platform) details.push(source.metadata.platform);
         if (source.metadata.timestamp) {
-          details.push(`Timestamp: ${formatTimestamp(source.metadata.timestamp)}`);
+          details.push(`Timestamp for Source: ${formatTimestamp(source.metadata.timestamp)}`);
         }
         break;
         
