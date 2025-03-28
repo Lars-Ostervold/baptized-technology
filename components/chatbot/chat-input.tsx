@@ -48,6 +48,16 @@ export function ChatInput({
     }
   }
 
+  // Handle keydown events for Enter and Shift+Enter
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      if (input.trim() && isReady) {
+        handleSubmit(e as unknown as FormEvent)
+      }
+    }
+  }
+
   // Function to clear input with proper typing
   const clearInput = () => {
     const event = { 
@@ -63,6 +73,7 @@ export function ChatInput({
           ref={textareaRef}
           value={input}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={!isReady}
           rows={1}
