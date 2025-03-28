@@ -6,21 +6,20 @@ import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import type { Message } from '@ai-sdk/react'
-import type { Source } from '@/lib/chatbot/types'
-import { SourceCard } from '@/components/chatbot/source-card' // Import the new component
+import type { Source, ExtendedMessage } from '@/lib/chatbot/types'
+import { SourceCard } from '@/components/chatbot/source-card'
 import { CitedMessage } from '@/components/chatbot/cited-message'
 
-// Define the status type similar to chat-input.tsx
+// Define the status type
 type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
 
 // Define props interface
 interface ChatMessagesProps {
-  messages: Message[]
+  messages: ExtendedMessage[]
   status: ChatStatus
   welcomeMessage?: string
   examples?: string[]
   onExampleClick: (example: string) => void
-  sources?: Source[]
 }
 
 export function ChatMessages({ 
@@ -28,8 +27,7 @@ export function ChatMessages({
   status, 
   welcomeMessage = "Send a message to begin chatting with the AI assistant.", 
   examples = [], 
-  onExampleClick,
-  sources = []
+  onExampleClick
 }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   
@@ -103,7 +101,7 @@ export function ChatMessages({
                     : "bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                 )}>
                   {message.role === "assistant" ? (
-                    <CitedMessage content={message.content} sources={i === messages.length - 1 ? sources : []} />
+                    <CitedMessage content={message.content} sources={message.sources || []} />
                   ) : (
                     message.content.split("\n").map((line, i) => (
                       <p key={i} className={i > 0 ? "mt-2" : ""}>
@@ -113,16 +111,20 @@ export function ChatMessages({
                   )}
                 </div>
                 
-                {/* Show sources for AI messages when they exist and it's the latest AI message */}
+                {/* Show sources for AI messages when they exist */}
                 {message.role === "assistant" && 
-                 i === messages.length - 1 && 
-                 sources && 
-                 sources.length > 0 && (
+                 message.sources && 
+                 message.sources.length > 0 && (
                   <div className="mt-2 space-y-2">
-                    <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">Top Sources:</p>
-                    {sources.slice(0, 2).map((source) => (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">Sources:</p>
+                    {message.sources.slice(0, 2).map((source) => (
                       <SourceCard key={source.id} source={source} />
                     ))}
+                    {message.sources.length > 2 && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                        +{message.sources.length - 2} more sources cited in text
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

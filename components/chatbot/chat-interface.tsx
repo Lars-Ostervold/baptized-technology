@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid'
 import { ChatMessages } from './chat-messages'
 import { ChatInput } from './chat-input'
 import { getChatbotConfig } from '@/lib/chatbot/config'
-import type { Source } from '@/lib/chatbot/types'
+import type { Source, ExtendedMessage } from '@/lib/chatbot/types'
 import { useAuth } from '@/components/auth/auth-provider'
 import ChatSidebar from './chat-sidebar'
 import { Menu } from 'lucide-react'
@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 export default function ChatInterface({ chatbotId = 'bibleproject' }) {  
   // Get the chatbot configuration based on the ID
   const config = getChatbotConfig(chatbotId)
-  const [sources, setSources] = useState<Source[]>([])
+  const [currentMessageSources, setCurrentMessageSources] = useState<Source[]>([])
   const { user } = useAuth()
   // Chat session state
   const [activeChatId, setActiveChatId] = useState<string | null>(null)
@@ -24,15 +24,14 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
 
-
   const {
-    messages,
+    messages: originalMessages,
     input,
     handleInputChange,
     isLoading,
     handleSubmit: originalHandleSubmit,
     status,
-    setMessages,
+    setMessages: setOriginalMessages,
   } = useChat({
     api: `/api/chat/${chatbotId}`,
     initialMessages: [
@@ -41,23 +40,59 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     id: activeChatId || undefined,
   })
   
+  // Use a state to track messages with sources
+  const [messagesWithSources, setMessagesWithSources] = useState<ExtendedMessage[]>([]);
+  
+  // Keep messagesWithSources in sync with messages
+  useEffect(() => {
+    const updatedMessages = originalMessages.map(msg => {
+      // Find if we have this message in our messagesWithSources array
+      const existingMsg = messagesWithSources.find(m => m.id === msg.id);
+      
+      // If it exists and has sources, keep them
+      if (existingMsg && (existingMsg as ExtendedMessage).sources) {
+        return {
+          ...msg,
+          sources: (existingMsg as ExtendedMessage).sources
+        };
+      }
+      
+      // For the latest assistant message, add current sources
+      if (
+        msg.role === 'assistant' && 
+        msg.id === originalMessages[originalMessages.length - 1]?.id && 
+        currentMessageSources.length > 0
+      ) {
+        return {
+          ...msg,
+          sources: currentMessageSources
+        };
+      }
+      
+      return msg;
+    });
+    
+    setMessagesWithSources(updatedMessages as ExtendedMessage[]);
+  }, [originalMessages, currentMessageSources]);
+
   const [previousStatus, setPreviousStatus] = useState(status)
 
   // Add this useEffect to monitor status changes
   useEffect(() => {
     // Check if we've just finished streaming (was streaming before, now complete)
     if (previousStatus === 'streaming' && (status === 'ready')) {
-      if (user && activeChatId && messages.length > 0) {
+      if (user && activeChatId && messagesWithSources.length > 0) {
         fetch(`/api/chats/${activeChatId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
-            messages: messages.map(msg => ({
+            messages: messagesWithSources.map(msg => ({
               id: msg.id,
               role: msg.role,
               content: msg.content,
+              sources: msg.sources, // Include sources in the saved data
             }))
           }),
         }).catch(error => {
@@ -68,7 +103,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     
     // Update previous status for next comparison
     setPreviousStatus(status)
-  }, [status, messages, user, activeChatId, previousStatus])
+  }, [status, messagesWithSources, user, activeChatId, previousStatus])
 
   const handleChatSelected = async (chatId: string) => {
     setActiveChatId(chatId)
@@ -79,9 +114,10 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       if (response.ok) {
         const chatData = await response.json()
         
-        // Reset the chat with the loaded messages
+        // Reset the chat with the loaded messages (which now include sources)
         if (chatData.messages && chatData.messages.length > 0) {
-          setMessages(chatData.messages)
+          setOriginalMessages(chatData.messages)
+          setMessagesWithSources(chatData.messages)
         }
       }
     } catch (error) {
@@ -91,9 +127,15 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
 
   const handleNewChat = () => {
     // Clear the current messages except system message
-    setMessages([
-      { id: nanoid(), role: "system", content: config.systemPrompt }
-    ])
+    const systemMessage = { 
+      id: nanoid(), 
+      role: "system" as const, 
+      content: config.systemPrompt 
+    };
+    
+    setOriginalMessages([systemMessage])
+    setMessagesWithSources([systemMessage])
+    setCurrentMessageSources([])
     
     // Clear active chat ID
     setActiveChatId(null)
@@ -145,7 +187,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       }
 
       // Create a cleaned chat history for context
-      const chatHistory = messages
+      const chatHistory = messagesWithSources
         .filter(msg => msg.role === 'user' || msg.role === 'assistant') // Only user and assistant messages
         .map(msg => ({
           role: msg.role,
@@ -165,11 +207,11 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       
       const { sources: retrievedSources, contextText, enhancedQuery } = await sourcesResponse.json()
       
-      // Store sources for UI display
-      setSources(retrievedSources || [])
+      // Store sources for the upcoming message
+      setCurrentMessageSources(retrievedSources || [])
       
       // Create augmented user message with context if available
-      const augmentedMessages = [...messages]
+      const augmentedMessages = [...messagesWithSources]
       
       // Add the user's new message
       const userMessageId = nanoid()
@@ -245,12 +287,11 @@ ${contextText}`
       {/* Main chat area with messages */}
       <div className={`flex-1 flex flex-col h-full overflow-hidden ${user && !isMobileView ? "ml-0" : ""}`}>
         <ChatMessages 
-          messages={messages} 
+          messages={messagesWithSources} 
           status={status} 
           welcomeMessage={config.welcomeMessage}
           examples={config.examples}
           onExampleClick={handleExampleClick}
-          sources={sources}
         />
       </div>
       

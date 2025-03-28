@@ -83,3 +83,7 @@ export type ChatbotConfig = {
   examples?: string[]
   comingSoon?: boolean
 }
+
+export interface ExtendedMessage extends Message {
+  sources?: Source[];
+}
