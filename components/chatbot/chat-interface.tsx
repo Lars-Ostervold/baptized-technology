@@ -144,14 +144,26 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         }
       }
 
+      // Create a cleaned chat history for context
+      const chatHistory = messages
+        .filter(msg => msg.role === 'user' || msg.role === 'assistant') // Only user and assistant messages
+        .map(msg => ({
+          role: msg.role,
+          content: typeof msg.content === 'string' ? msg.content : ''
+        }))
+        .slice(-6) // Use last 6 messages for context (3 exchanges)
+
       // First, retrieve relevant sources
       const sourcesResponse = await fetch(`/api/sources/${chatbotId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: input })
+        body: JSON.stringify({ 
+          text: input,
+          chatHistory
+        })
       })
       
-      const { sources: retrievedSources, contextText } = await sourcesResponse.json()
+      const { sources: retrievedSources, contextText, enhancedQuery } = await sourcesResponse.json()
       
       // Store sources for UI display
       setSources(retrievedSources || [])

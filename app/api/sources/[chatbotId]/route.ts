@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { embed } from 'ai'
+import { embed, generateText } from 'ai'
 import { openai } from '@/lib/openai'
 import { getAdminClient } from '@/lib/supabase'
 import { getChatbotConfig } from '@/lib/chatbot/config'
@@ -9,8 +9,8 @@ export const runtime = "edge"
 
 export async function POST(req: Request, { params }: { params: { chatbotId: string } }) {
   try {
-    // Get the query text from request
-    const { text } = await req.json()
+    // Get the query text and chat history from request
+    const { text, chatHistory = [] } = await req.json()
     
     if (!text) {
       return NextResponse.json(
@@ -22,15 +22,18 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     // Get chatbot configuration
     const config = getChatbotConfig(params.chatbotId)
     
-    // Generate embedding for the query
-    const { embedding } = await generateEmbedding(text)
+    // Generate a contextual query using the chat history
+    const queryText = await generateContextualQuery(text, chatHistory)
+    
+    // Generate embedding for the enhanced query
+    const { embedding } = await generateEmbedding(queryText)
     
     // Query Supabase for relevant documents
     const supabase = getAdminClient()
     const { data: sources, error } = await supabase
       .rpc('match_documents', {
         query_embedding: embedding,
-        match_threshold: 0, // Adjust threshold as needed
+        match_threshold: 0.5, // Adjust threshold as needed
         match_count: 5,       // Number of matches to return
         vector_namespace: config.vectorNamespace
       })
@@ -61,7 +64,8 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     
     return NextResponse.json({
       sources: formattedSources,
-      contextText
+      contextText,
+      enhancedQuery: queryText
     })
     
   } catch (error) {
@@ -81,4 +85,32 @@ async function generateEmbedding(text: string) {
   })
 
   return { embedding }
+}
+
+// Helper function to generate a contextually enhanced query using chat history
+async function generateContextualQuery(currentQuery: string, chatHistory: any[]) {
+  // If there's no chat history, just use the current query
+  if (!chatHistory || chatHistory.length === 0) {
+    return currentQuery
+  }
+
+  const { text } = await generateText({
+    model: openai.chat("gpt-4o-mini"),
+    messages: [
+      {
+        role: "system",
+        content: "You are a query enhancement assistant. Your job is to rewrite the user's latest query to include important context from the conversation history. Don't summarize the entire conversation - just enhance the latest query to make it more specific based on the conversation context. Return only the enhanced query text with no additional explanation."
+      },
+      ...chatHistory.slice(-6).map((msg: any) => ({ 
+        role: msg.role as "user" | "assistant", 
+        content: msg.content 
+      })),
+      {
+        role: "user",
+        content: `Based on our conversation, please rewrite this query to include relevant context: "${currentQuery}"`
+      }
+    ],
+  })
+
+  return text.trim()
 }
