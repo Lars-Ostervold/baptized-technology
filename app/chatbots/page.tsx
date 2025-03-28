@@ -35,42 +35,48 @@ export default function SolutionsPage() {
     <div className="container max-w-7xl py-20">
       <WaterBackground/>
       <div className="space-y-2 text-center mb-16">
-        <h1 className="text-4xl font-bold tracking-tight">AI Solutions</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Smart Tools for Curious Minds & Hungry Hearts</h1>
         <p className="text-muted-foreground text-lg">
-          Discover our specialized AI chatbots designed to revolutionize different industries
+          The best Christian thinkers, in your pocket—curated, summarized, and ready to explore.
         </p>
       </div>
 
       {loading ? (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-muted/50 rounded-lg text-center">
+        <div className="max-w-md mx-auto mb-8 p-4 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg">
           <div className="flex justify-center items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             <p className="text-sm text-muted-foreground">Checking authentication...</p>
           </div>
         </div>
       ) : !user ? (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-muted/50 rounded-lg text-center">
-          <p className="text-sm text-muted-foreground mb-2">Want to save your chat history and preferences?</p>
-          <LoginDialog />
+        <div className="max-w-md mx-auto mb-8 p-4 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg">
+          <div className="flex flex-col items-center text-center">
+            <p className="text-sm text-muted-foreground mb-3">Want to save your chat history and preferences?</p>
+            <LoginDialog />
+          </div>
         </div>
       ) : (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg text-center">
-          <p className="text-sm text-green-600 dark:text-green-400">
-            Logged in as {user.email}. Your chat history will be saved.
-          </p>
+        <div className="max-w-md mx-auto mb-8 p-4 bg-emerald-500/10 backdrop-blur-sm rounded-xl border border-emerald-500/20 shadow-lg">
+          <div className="flex flex-col items-center text-center">
+            <p className="text-sm text-muted-foreground">
+              Logged in as {user.email}. Your chat history will be saved.
+            </p>
+          </div>
         </div>
       )}
 
       {/* Search Bar */}
       <div className="relative max-w-md mx-auto mb-12">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-        <Input
-          type="search"
-          placeholder="Search chatbots..."
-          className="pl-10"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5" />
+          <Input
+            type="search"
+            placeholder="Search chatbots..."
+            className="pl-12 h-12 bg-white/90 dark:bg-slate-900/90 focus:border-blue-500 focus:ring-blue-500/20"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Grid of Chatbots */}

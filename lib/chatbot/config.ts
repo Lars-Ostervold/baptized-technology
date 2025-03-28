@@ -1,5 +1,5 @@
 // lib/chatbot/config.ts
-import { BookOpen, Code } from "lucide-react"
+import { Lightbulb, HeartHandshake, Building2 } from "lucide-react"
 import type { ChatbotConfig } from "./types"
 
 // vectorNameSpace is the id from 'chatbots' table in Supabase
@@ -9,7 +9,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     id: "bibleproject",
     title: "BibleProject",
     description: "Experience the Bible as a unified story that leads to Jesus. Trained on podcasts, videos, classes, and study notes from BibleProject.",
-    icon: Code,
+    icon: Lightbulb,
     category: "Bible Study",
     gradient: "from-blue-500/10 to-cyan-500/10",
     iconColor: "text-blue-500",
@@ -33,7 +33,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     id: "johnMarkComer",
     title: "John Mark Comer",
     description: "Trained on the writings of John Mark Comer, providing insights on spiritual formation and cultural commentary.",
-    icon: BookOpen,
+    icon: HeartHandshake,
     category: "Spiritual Formation",
     gradient: "from-green-500/10 to-teal-500/10",
     iconColor: "text-green-500",
@@ -56,7 +56,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     id: "timKeller",
     title: "Tim Keller",
     description: "Trained on the writing and sermons of Tim Keller providing insights on urban ministry, apologetics, and cultural engagement.",
-    icon: BookOpen,
+    icon: Building2,
     category: "Urban Ministry",
     gradient: "from-purple-500/10 to-indigo-500/10",
     iconColor: "text-purple-500",
