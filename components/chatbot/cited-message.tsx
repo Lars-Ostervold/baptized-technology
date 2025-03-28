@@ -7,16 +7,56 @@ interface CitedMessageProps {
   sources: Source[];
 }
 
+// Helper function to handle markdown-style text
+function formatMarkdownText(text: string): React.ReactNode {
+  // Process bold text (**text**)
+  const parts: React.ReactNode[] = [];
+  const boldRegex = /\*\*(.*?)\*\*/g;
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = boldRegex.exec(text)) !== null) {
+    // Add text before the bold part
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    
+    // Add the bold part
+    parts.push(<strong key={`bold-${match.index}`}>{match[1]}</strong>);
+    
+    lastIndex = match.index + match[0].length;
+  }
+  
+  // Add any remaining text
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  
+  return parts;
+}
+
 export function CitedMessage({ content, sources }: CitedMessageProps) {
   if (!sources || sources.length === 0) {
-    // If no sources, just return the plain content
+    // If no sources, just return the plain content with markdown formatting
     return (
       <div>
-        {content.split('\n').map((line, i) => (
-          <p key={i} className={i > 0 ? "mt-2" : ""}>
-            {line || "\u00A0"}
-          </p>
-        ))}
+        {content.split('\n').map((line, i) => {
+          // Check if this is a header
+          const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+          if (headerMatch) {
+            const level = headerMatch[1].length; // Number of # symbols
+            const headerText = headerMatch[2];
+            
+            const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+            return <HeaderTag key={i} className="font-bold mt-3 mb-2">{formatMarkdownText(headerText)}</HeaderTag>;
+          }
+          
+          return (
+            <p key={i} className={i > 0 ? "mt-2" : ""}>
+              {formatMarkdownText(line) || "\u00A0"}
+            </p>
+          );
+        })}
       </div>
     );
   }
@@ -24,14 +64,27 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
   // Regex to match citation patterns [1], [2], etc.
   const regex = /\[(\d+)\]/g;
   
+  // Move citations outside punctuation (period, comma, semicolon, colon, exclamation, question mark)
+  // This handles cases where citations appear before punctuation
+  let processedContent = content.replace(/(\[(?:\d+)\](?:\s*\[(?:\d+)\])*)\s*([.,;:!?])/g, (match, citations, punctuation) => {
+    return `${punctuation}${citations}`;
+  });
+  
+  // Handle cases where citations appear after punctuation (shouldn't need to change these)
+  // but we still keep this for completeness
+  processedContent = processedContent.replace(/([.,;:!?])\s*(\[(?:\d+)\](?:\s*\[(?:\d+)\])*)/g, (match, punctuation, citations) => {
+    return `${punctuation}${citations}`;
+  });
+  
   // Split content by citation markers and create React elements
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   let match;
   let matches = false;
+  let prevWasCitation = false;
   
   // Create a copy of content for processing
-  const contentCopy = content;
+  const contentCopy = processedContent;
   
   while ((match = regex.exec(contentCopy)) !== null) {
     matches = true;
@@ -42,6 +95,19 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
         <React.Fragment key={`text-${lastIndex}`}>
           {textPart}
         </React.Fragment>
+      );
+      prevWasCitation = false;
+    }
+    
+    // Add comma if this is a consecutive citation
+    if (prevWasCitation) {
+      parts.push(
+        <span 
+          key={`comma-${match.index}`}
+          className="inline-block text-[0.7em] align-super relative top-[-0.3em]"
+        >
+          ,
+        </span>
       );
     }
     
@@ -57,13 +123,14 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
           key={`citation-${match.index}`}
           href={source.url || '#'}
           title={source.title}
-          className="inline-flex items-center justify-center h-4 min-w-4 px-1 text-xs font-medium rounded bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+          className="inline-block text-[0.7em] align-super relative top-[-0.3em] text-blue-600/70 dark:text-blue-400/70 hover:underline decoration-blue-400/30 dark:decoration-blue-500/30 decoration-dotted underline-offset-2 hover:text-blue-600 dark:hover:text-blue-400 hover:decoration-blue-500/60 dark:hover:decoration-blue-400/60"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {match[0]}
+          {sourceNumber}
         </a>
       );
+      prevWasCitation = true;
     } else {
       // If citation number is out of range, just add the text
       parts.push(
@@ -71,6 +138,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
           {match[0]}
         </React.Fragment>
       );
+      prevWasCitation = false;
     }
     
     lastIndex = match.index + match[0].length;
@@ -89,40 +157,133 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
   if (!matches) {
     return (
       <div>
-        {content.split('\n').map((line, i) => (
-          <p key={i} className={i > 0 ? "mt-2" : ""}>
-            {line || "\u00A0"}
-          </p>
-        ))}
+        {content.split('\n').map((line, i) => {
+          // Check if this is a header
+          const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+          if (headerMatch) {
+            const level = headerMatch[1].length; // Number of # symbols
+            const headerText = headerMatch[2];
+            
+            const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+            return <HeaderTag key={i} className="font-bold mt-3 mb-2">{formatMarkdownText(headerText)}</HeaderTag>;
+          }
+          
+          return (
+            <p key={i} className={i > 0 ? "mt-2" : ""}>
+              {formatMarkdownText(line) || "\u00A0"}
+            </p>
+          );
+        })}
       </div>
     );
   }
 
-  // Transform parts to respect newlines
-  const result: React.ReactNode[] = [];
-  let currentParagraph: React.ReactNode[] = [];
+  // Process parts to handle line breaks and formatting
+  const paragraphs: React.ReactNode[] = [];
+  let currentParagraphParts: React.ReactNode[] = [];
   
   parts.forEach((part, index) => {
-    if (typeof part === 'string') {
-      const lines = part.split('\n');
-      lines.forEach((line, lineIndex) => {
-        if (lineIndex > 0) {
-          // End previous paragraph
-          result.push(<p key={`p-${index}-${lineIndex-1}`}>{currentParagraph}</p>);
-          currentParagraph = [line];
-        } else {
-          currentParagraph.push(line);
-        }
-      });
+    if (React.isValidElement(part) && part.type === React.Fragment) {
+      const text = part.props.children as string;
+      if (typeof text === 'string') {
+        const lines = text.split('\n');
+        
+        lines.forEach((line, lineIndex) => {
+          if (lineIndex > 0) {
+            // Process any markdown in the current paragraph
+            paragraphs.push(
+              <p key={`p-${index}-${lineIndex-1}`} className="mt-2">
+                {currentParagraphParts.map((part, i) => {
+                  if (React.isValidElement(part) && part.type === React.Fragment) {
+                    return formatMarkdownText(part.props.children as string);
+                  }
+                  return part;
+                })}
+              </p>
+            );
+            currentParagraphParts = [];
+            
+            // Check if the line is a header
+            const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+            if (headerMatch) {
+              const level = headerMatch[1].length;
+              const headerText = headerMatch[2];
+              
+              const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+              paragraphs.push(
+                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-3 mb-2">
+                  {formatMarkdownText(headerText)}
+                </HeaderTag>
+              );
+            } else {
+              // Add this line to a new paragraph
+              currentParagraphParts.push(
+                <React.Fragment key={`line-${index}-${lineIndex}`}>
+                  {line}
+                </React.Fragment>
+              );
+            }
+          } else {
+            // Check if the line is a header
+            const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+            if (headerMatch) {
+              // If we have existing content, add it as a paragraph first
+              if (currentParagraphParts.length > 0) {
+                paragraphs.push(
+                  <p key={`p-before-h-${index}`} className="mt-2">
+                    {currentParagraphParts.map((part, i) => {
+                      if (React.isValidElement(part) && part.type === React.Fragment) {
+                        return formatMarkdownText(part.props.children as string);
+                      }
+                      return part;
+                    })}
+                  </p>
+                );
+                currentParagraphParts = [];
+              }
+              
+              // Add the header
+              const level = headerMatch[1].length;
+              const headerText = headerMatch[2];
+              
+              const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+              paragraphs.push(
+                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-3 mb-2">
+                  {formatMarkdownText(headerText)}
+                </HeaderTag>
+              );
+            } else {
+              // Add to current paragraph
+              currentParagraphParts.push(
+                <React.Fragment key={`line-${index}-${lineIndex}`}>
+                  {line}
+                </React.Fragment>
+              );
+            }
+          }
+        });
+      } else {
+        currentParagraphParts.push(part);
+      }
     } else {
-      currentParagraph.push(part);
+      // For non-fragment elements like citations
+      currentParagraphParts.push(part);
     }
   });
   
-  // Add the last paragraph
-  if (currentParagraph.length > 0) {
-    result.push(<p key="p-last">{currentParagraph}</p>);
+  // Add the last paragraph if there's anything left
+  if (currentParagraphParts.length > 0) {
+    paragraphs.push(
+      <p key="last-paragraph" className="mt-2">
+        {currentParagraphParts.map((part, i) => {
+          if (React.isValidElement(part) && part.type === React.Fragment) {
+            return formatMarkdownText(part.props.children as string);
+          }
+          return part;
+        })}
+      </p>
+    );
   }
   
-  return <div className="space-y-2">{result}</div>;
+  return <div className="space-y-1">{paragraphs}</div>;
 } 
