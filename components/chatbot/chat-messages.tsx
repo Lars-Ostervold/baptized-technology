@@ -104,8 +104,8 @@ export function ChatMessages({
                 <div className={cn(
                   "rounded-full p-2 flex-shrink-0",
                   message.role === "user" 
-                    ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 order-2" 
-                    : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                    ? "bg-slate-800 text-white dark:bg-slate-900 order-2" 
+                    : "bg-white text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                 )}>
                   {message.role === "user" ? (
                     <User size={16} />
@@ -117,16 +117,20 @@ export function ChatMessages({
                 {/* Message bubble */}
                 <div className="flex flex-col space-y-2 max-w-[80%]">
                   <div className={cn(
-                    "rounded-2xl px-4 py-3 shadow-sm",
+                    "rounded-lg px-4 py-3 shadow-sm",
                     message.role === "user" 
-                      ? "bg-blue-500 text-white dark:bg-blue-600" 
+                      ? "bg-slate-800 text-white dark:bg-slate-900 border border-slate-700" 
                       : "bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                   )}>
                     {message.role === "assistant" ? (
                       <CitedMessage content={message.content} sources={message.sources || []} />
                     ) : (
                       message.content.split("\n").map((line, i) => (
-                        <p key={i} className={i > 0 ? "mt-2" : ""}>
+                        <p key={i} className={cn(
+                          "leading-relaxed",
+                          i > 0 ? "mt-4" : "",
+                          line.trim() === "" ? "h-4" : ""
+                        )}>
                           {line || "\u00A0"}
                         </p>
                       ))
@@ -171,10 +175,10 @@ export function ChatMessages({
               animate={{ opacity: 1 }}
               className="flex items-start gap-3"
             >
-              <div className="rounded-full p-2 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              <div className="rounded-full p-2 bg-white text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                 <Bot size={16} />
               </div>
-              <div className="rounded-2xl px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center">
+              <div className="rounded-lg px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center">
                 <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
                 <span className="ml-2 text-slate-500 dark:text-slate-400 text-sm">Thinking...</span>
               </div>

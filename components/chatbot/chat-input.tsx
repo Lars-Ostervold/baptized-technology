@@ -78,12 +78,12 @@ export function ChatInput({
           disabled={!isReady}
           rows={1}
           className={cn(
-            "w-full py-2.5 pl-4 pr-24 rounded-full border-none",
-            "dark:bg-slate-800 dark:text-slate-100",
+            "w-full py-2.5 pl-4 pr-24 rounded-lg border-none",
+            "bg-white dark:bg-slate-800 dark:text-slate-100",
             "focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
             "outline-none ring-0 ring-offset-0 box-border",
             "transition-all duration-200 resize-none overflow-hidden",
-            "leading-6 flex items-center",
+            "leading-6 flex items-center shadow-sm border border-slate-200 dark:border-slate-700",
             isReady 
               ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white" 
               : "bg-slate-50 dark:bg-slate-900 text-slate-400 cursor-not-allowed"
@@ -114,7 +114,7 @@ export function ChatInput({
             "absolute right-1 top-1/2 -translate-y-1/2 rounded-full p-2",
             "transition-all duration-200 ease-in-out",
             isReady && input.trim()
-              ? "bg-blue-500 text-white hover:bg-blue-600"
+              ? "bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
               : "bg-slate-200 text-slate-400 dark:bg-slate-700 cursor-not-allowed"
           )}
         >

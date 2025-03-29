@@ -158,12 +158,12 @@ export function SourceCard({ source }: SourceCardProps) {
 
   return (
     <Card 
-      className="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer shadow-sm rounded-lg"
       onClick={() => source.url && window.open(source.url, '_blank', 'noopener,noreferrer')}
     >
       <CardContent className="p-3">
         <div className="flex gap-2">
-          <div className="flex-shrink-0 flex items-center">
+          <div className="flex-shrink-0 flex items-center text-slate-700 dark:text-slate-300">
             {getSourceIcon()}
           </div>
           <div className="flex flex-col gap-1">

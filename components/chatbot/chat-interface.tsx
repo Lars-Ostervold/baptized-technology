@@ -297,7 +297,7 @@ ${contextText}`
         {/* Floating input at bottom */}
         <div className="absolute bottom-6 left-0 right-0 px-4">
           <div className="max-w-2xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 ring-1 ring-slate-200 dark:ring-slate-700 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-0">
+            <div className="bg-transparent rounded-lg transition-all duration-200">
               <ChatInput 
                 input={input}
                 handleInputChange={handleInputChange}

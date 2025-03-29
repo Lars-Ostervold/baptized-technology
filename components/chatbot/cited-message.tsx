@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Source } from '@/lib/chatbot/types';
+import { cn } from '@/lib/utils';
 
 interface CitedMessageProps {
   content: string;
@@ -48,11 +49,15 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
             const headerText = headerMatch[2];
             
             const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
-            return <HeaderTag key={i} className="font-bold mt-3 mb-2">{formatMarkdownText(headerText)}</HeaderTag>;
+            return <HeaderTag key={i} className="font-bold mt-6 mb-4">{formatMarkdownText(headerText)}</HeaderTag>;
           }
           
           return (
-            <p key={i} className={i > 0 ? "mt-2" : ""}>
+            <p key={i} className={cn(
+              "leading-relaxed",
+              i > 0 ? "mt-4" : "",
+              line.trim() === "" ? "h-4" : ""
+            )}>
               {formatMarkdownText(line) || "\u00A0"}
             </p>
           );
@@ -165,11 +170,15 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
             const headerText = headerMatch[2];
             
             const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
-            return <HeaderTag key={i} className="font-bold mt-3 mb-2">{formatMarkdownText(headerText)}</HeaderTag>;
+            return <HeaderTag key={i} className="font-bold mt-6 mb-4">{formatMarkdownText(headerText)}</HeaderTag>;
           }
           
           return (
-            <p key={i} className={i > 0 ? "mt-2" : ""}>
+            <p key={i} className={cn(
+              "leading-relaxed",
+              i > 0 ? "mt-4" : "",
+              line.trim() === "" ? "h-4" : ""
+            )}>
               {formatMarkdownText(line) || "\u00A0"}
             </p>
           );
@@ -211,7 +220,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
               
               const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
               paragraphs.push(
-                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-3 mb-2">
+                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-6 mb-4">
                   {formatMarkdownText(headerText)}
                 </HeaderTag>
               );
@@ -248,7 +257,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
               
               const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
               paragraphs.push(
-                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-3 mb-2">
+                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-6 mb-4">
                   {formatMarkdownText(headerText)}
                 </HeaderTag>
               );
