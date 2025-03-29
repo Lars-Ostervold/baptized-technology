@@ -1,11 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, LogOut } from "lucide-react"
+import { Loader2, LogOut, ArrowLeft } from "lucide-react"
 import { LoginDialog } from "@/components/auth/login-dialog" 
 import { useAuth } from "@/components/auth/auth-provider"
 import * as LucideIcons from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import Image from "next/image"
 
 interface ChatbotHeaderProps {
   title: string
@@ -37,11 +39,38 @@ export default function ChatbotHeader({ title, iconName, iconColor }: ChatbotHea
 
   return (
     <div className="flex items-center justify-between border-b px-4 py-2">
+      <div className="flex items-center gap-4">
+        <Link href="/chatbots">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="sr-only">Back to chatbots</span>
+          </Button>
+        </Link>
+        <div className="hidden md:block">
+          <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Baptized Technology
+          </span>
+        </div>
+        <div className="md:hidden">
+          <Image
+            src="/images/compact_logo_BT.png"
+            alt="Baptized Technology"
+            width={32}
+            height={32}
+          />
+        </div>
+      </div>
       <div className="flex items-center gap-2">
-        <div className={`p-1 rounded ${iconColor}`}>
+        <div className={`hidden md:block p-1 rounded ${iconColor}`}>
           <IconComponent className="h-5 w-5" />
         </div>
-        <h1 className="text-lg font-medium">{title}</h1>
+        <h1 className="text-lg font-medium">
+          {title} Guide
+        </h1>
       </div>
       {loading ? (
         <div className="flex items-center gap-2">
@@ -52,8 +81,11 @@ export default function ChatbotHeader({ title, iconName, iconColor }: ChatbotHea
         <LoginDialog />
       ) : (
         <div className="flex items-center gap-3">
-          <div className="text-xs text-green-600 dark:text-green-400">
-            Logged in as {user.email?.split('@')[0]}
+          <div className="hidden md:flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-green-500" />
+            <span className="text-xs text-slate-600 dark:text-slate-300">
+              {user.email?.split('@')[0]}
+            </span>
           </div>
           <Button 
             variant="ghost" 
