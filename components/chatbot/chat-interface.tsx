@@ -45,6 +45,11 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   
   // Keep messagesWithSources in sync with messages
   useEffect(() => {
+    // Prevent infinite loop when only system message exists
+    if (originalMessages.length === 1 && originalMessages[0].role === 'system' && messagesWithSources.length <= 1) {
+      return;
+    }
+
     const updatedMessages = originalMessages.map(msg => {
       // Find if we have this message in our messagesWithSources array
       const existingMsg = messagesWithSources.find(m => m.id === msg.id);
