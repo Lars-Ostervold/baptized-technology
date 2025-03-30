@@ -128,11 +128,6 @@ export function ChatInput({
       
       {/* Status indicator */}
       <div className="absolute -bottom-6 left-0 right-0 text-center">
-        {status === 'streaming' && (
-          <span className="text-xs text-slate-500 dark:text-slate-400 animate-pulse">
-            AI is responding...
-          </span>
-        )}
         {status === 'error' && (
           <span className="text-xs text-red-500">
             Error occurred. Please try again.

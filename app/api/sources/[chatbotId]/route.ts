@@ -44,6 +44,8 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     const embeddings = await Promise.all(
       expandedQueries.map(q => generateEmbedding(q))
     )
+
+    //UPDATE STATUS TO SEARCHING
     
     // Query Supabase with all embeddings and get combined results
     const supabase = getAdminClient()
@@ -79,6 +81,8 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
         })
       }
     })
+
+    //UPDATE STATUS TO SUMMARIZING
     
     // Get the top 20 sources by similarity for re-ranking
     const topSourcesForReranking = combinedSources

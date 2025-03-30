@@ -24,6 +24,10 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
 
+  // RAG status
+  type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing'
+  const [ragStatus, setRagStatus] = useState<RagStatus>('idle')
+
   const {
     messages: originalMessages,
     input,
@@ -159,11 +163,17 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    console.log('handleSubmit called')
+    console.log('status', status)
     
     // Don't do anything if no input or already loading
     if (!input.trim() || isLoading) return
     
     try {
+      // Set RAG status to planning
+      setRagStatus('planning')
+
       // If user is logged in but no active chat, create a new chat session
       if (user && !activeChatId) {
         try {
@@ -200,8 +210,24 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         }))
         .slice(-6) // Use last 6 messages for context (3 exchanges)
 
-      // First, retrieve relevant sources
-      const sourcesResponse = await fetch(`/api/sources/${chatbotId}`, {
+      // Step 1: Check query relevance
+      const relevanceResponse = await fetch(`/api/sources/${chatbotId}/check-relevance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: input })
+      })
+      
+      const { isRelevant, status: relevanceStatus } = await relevanceResponse.json()
+      
+      if (!isRelevant) {
+        // If query is off-topic, proceed with regular chat
+        originalHandleSubmit(e)
+        return
+      }
+
+      // Step 2: Search for sources
+      setRagStatus('searching')
+      const searchResponse = await fetch(`/api/sources/${chatbotId}/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -210,10 +236,29 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         })
       })
       
-      const { sources: retrievedSources, contextText, enhancedQuery, isOffTopic } = await sourcesResponse.json()
+      const { sources: retrievedSources, enhancedQuery, status: searchStatus } = await searchResponse.json()
+      
+      if (searchStatus === 'no_results') {
+        // If no sources found, proceed with regular chat
+        originalHandleSubmit(e)
+        return
+      }
+
+      // Step 3: Re-rank and summarize sources
+      setRagStatus('summarizing')
+      const summarizeResponse = await fetch(`/api/sources/${chatbotId}/summarize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          sources: retrievedSources,
+          queryText: enhancedQuery
+        })
+      })
+      
+      const { sources: rerankedSources, contextText, status: summarizeStatus } = await summarizeResponse.json()
       
       // Store sources for the upcoming message
-      setCurrentMessageSources(retrievedSources || [])
+      setCurrentMessageSources(rerankedSources || [])
       
       // Create augmented user message with context if available
       const augmentedMessages = [...messagesWithSources]
@@ -227,8 +272,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         parts: [{ type: 'text', text: input }]
       })
       
-      // If we have context and the query is not off-topic, add it to the system message
-      if (contextText && !isOffTopic) {
+      // If we have context, add it to the system message
+      if (contextText) {
         // Find existing system message
         const systemIndex = augmentedMessages.findIndex(msg => msg.role === 'system')
         
@@ -240,7 +285,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
             
 Use this information to answer the question. If the information doesn't contain the answer, use your general knowledge but acknowledge this.
 
-IMPORTANT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${retrievedSources.length} sources available.
+IMPORTANT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${rerankedSources.length} sources available.
 
 Context:
 ${contextText}`
@@ -256,10 +301,15 @@ ${contextText}`
       })
       
     } catch (error) {
-      console.error("Error fetching sources:", error)
-      // If source retrieval fails, still send the regular chat message
+      console.error("Error in RAG process:", error)
+      // If any step fails, fall back to regular chat
       originalHandleSubmit(e)
+    } finally {
+      // Reset RAG status to idle
+      setRagStatus('idle')
     }
+
+    console.log('status after handleSubmit', status)
   }
 
   return (
@@ -298,6 +348,42 @@ ${contextText}`
           examples={config.examples}
           onExampleClick={handleExampleClick}
         />
+
+        {/* Status indicator */}
+        <div className="absolute bottom-20 left-0 right-0 px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            {status === 'ready' && ragStatus === 'idle' && (
+              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+                Ready to chat!
+              </span>
+            )}
+            {(status === 'streaming' || status === 'submitted') && (
+              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+                AI is responding...
+              </span>
+            )}
+            {ragStatus === 'planning' && (
+              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+                Planning response...
+              </span>
+            )}
+            {ragStatus === 'searching' && (
+              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+                Searching knowledge base...
+              </span>
+            )}
+            {ragStatus === 'summarizing' && (
+              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+                Preparing response...
+              </span>
+            )}
+            {status === 'error' && (
+              <span className="text-sm text-red-500">
+                Error occurred. Please try again.
+              </span>
+            )}
+          </div>
+        </div>
         
         {/* Floating input at bottom */}
         <div className="absolute bottom-6 left-0 right-0 px-4">
