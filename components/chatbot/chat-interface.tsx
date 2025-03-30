@@ -81,7 +81,11 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       return msg;
     });
     
-    setMessagesWithSources(updatedMessages as ExtendedMessage[]);
+    // Only update if the messages are different
+    const hasChanges = JSON.stringify(updatedMessages) !== JSON.stringify(messagesWithSources);
+    if (hasChanges) {
+      setMessagesWithSources(updatedMessages as ExtendedMessage[]);
+    }
   }, [originalMessages, currentMessageSources]);
 
   const [previousStatus, setPreviousStatus] = useState(status)
@@ -112,7 +116,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     
     // Update previous status for next comparison
     setPreviousStatus(status)
-  }, [status, messagesWithSources, user, activeChatId, previousStatus])
+  }, [status])
 
   const handleChatSelected = async (chatId: string) => {
     setActiveChatId(chatId)
@@ -164,9 +168,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    console.log('handleSubmit called')
-    console.log('status', status)
-    
     // Don't do anything if no input or already loading
     if (!input.trim() || isLoading) return
     
@@ -200,6 +201,15 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
           console.error('Error creating chat session:', error)
         }
       }
+      // Update UI with user message immediately
+      const userMessageId = nanoid()
+      const userMessage: ExtendedMessage = {
+        id: userMessageId,
+        role: 'user',
+        content: input,
+        parts: [{ type: 'text', text: input }]
+      }
+      setMessagesWithSources([...messagesWithSources, userMessage])
 
       // Create a cleaned chat history for context
       const chatHistory = messagesWithSources
@@ -266,15 +276,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       // Create augmented user message with context if available
       const augmentedMessages = [...messagesWithSources]
       
-      // Add the user's new message
-      const userMessageId = nanoid()
-      augmentedMessages.push({
-        id: userMessageId,
-        role: 'user',
-        content: input,
-        parts: [{ type: 'text', text: input }]
-      })
-      
+      augmentedMessages.push(userMessage)
+
       // If we have context, add it to the system message
       if (contextText) {
         // Find existing system message
