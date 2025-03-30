@@ -221,6 +221,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       
       if (!isRelevant) {
         // If query is off-topic, proceed with regular chat
+        console.log('Query is off-topic, proceeding with regular chat')
+        setCurrentMessageSources([]) // Clear sources for off-topic queries
         originalHandleSubmit(e)
         return
       }
@@ -240,6 +242,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       
       if (searchStatus === 'no_results') {
         // If no sources found, proceed with regular chat
+        setCurrentMessageSources([]) // Clear sources when no results found
         originalHandleSubmit(e)
         return
       }
@@ -303,6 +306,7 @@ ${contextText}`
     } catch (error) {
       console.error("Error in RAG process:", error)
       // If any step fails, fall back to regular chat
+      setCurrentMessageSources([]) // Clear sources on error
       originalHandleSubmit(e)
     } finally {
       // Reset RAG status to idle
