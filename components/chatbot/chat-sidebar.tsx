@@ -81,6 +81,7 @@ export default function ChatSidebar({
   // Group chats by date
   const groupedChats = chats.reduce<Record<string, ChatSession[]>>((groups, chat) => {
     const date = new Date(chat.updated_at)
+    // Use the local date string to ensure correct timezone handling
     const dateKey = format(date, 'yyyy-MM-dd')
     
     if (!groups[dateKey]) {
@@ -93,7 +94,7 @@ export default function ChatSidebar({
 
   // Format date for display
   const formatDateHeading = (dateKey: string) => {
-    const date = new Date(dateKey);
+    const date = new Date(dateKey + 'T00:00:00') // Add time component to ensure consistent timezone handling
     if (isToday(date)) return "Today";
     if (isYesterday(date)) return "Yesterday";
     return format(date, 'MMMM d, yyyy');
@@ -114,7 +115,7 @@ export default function ChatSidebar({
           variant="ghost"
           size="icon"
           onClick={isMobileView ? onCloseMobile : onToggleCollapse}
-          className="absolute right-0 top-4 -mr-3 z-10 h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
+          className="absolute right-0 top-4 -mr-3 z-40 h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm"
         >
           <ChevronLeft size={12} />
         </Button>
