@@ -15,11 +15,12 @@ import { EnhancedWelcome } from '@/components/chatbot/enhanced-welcome'
 
 // Define the status type
 type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
-
+type RagStatus = 'planning' | 'searching' | 'summarizing' | 'idle'
 // Define props interface
 interface ChatMessagesProps {
   messages: ExtendedMessage[]
   status: ChatStatus
+  ragStatus: RagStatus
   welcomeMessage?: string
   examples?: string[]
   onExampleClick: (example: string) => void
@@ -29,6 +30,7 @@ interface ChatMessagesProps {
 export function ChatMessages({ 
   messages, 
   status, 
+  ragStatus,
   welcomeMessage = "Send a message to begin chatting with the AI assistant.", 
   examples = [], 
   onExampleClick,
@@ -61,7 +63,16 @@ export function ChatMessages({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  if (messages.length <= 1 && status !== 'streaming' && !isLoadingChat) {
+  // Show the welcome screen only when there are no messages or just a system message
+  // and we're not in any loading/streaming state
+  const shouldShowWelcome = messages.length <= 1 && 
+                           status !== 'streaming' && 
+                           status !== 'submitted' && 
+                           status !== 'waiting' &&
+                           ragStatus === 'idle' &&
+                           !isLoadingChat;
+
+  if (shouldShowWelcome) {
     return (
       <div className="flex-1 flex items-center justify-center p-0 overflow-hidden">
         <EnhancedWelcome 

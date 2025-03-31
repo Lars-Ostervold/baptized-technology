@@ -379,6 +379,7 @@ ${contextText}`
         <ChatMessages 
           messages={messagesWithSources} 
           status={status} 
+          ragStatus={ragStatus}
           welcomeMessage={config.welcomeMessage}
           examples={config.examples}
           onExampleClick={handleExampleClick}
@@ -386,7 +387,7 @@ ${contextText}`
         />
 
         {/* Status indicator */}
-        <div className="absolute bottom-20 left-0 right-0 px-4">
+        <div className="absolute bottom-20 left-0 right-0 px-4 z-50">
           <div className="max-w-2xl mx-auto flex justify-center">
             {/* {status === 'ready' && ragStatus === 'idle' && (
               <RagStatusIndicator status="idle" />
@@ -414,7 +415,7 @@ ${contextText}`
         </div>
         
         {/* Floating input at bottom */}
-        <div className="absolute bottom-6 left-0 right-0 px-4">
+        <div className="absolute bottom-6 left-0 right-0 px-4 z-50">
           <div className="max-w-2xl mx-auto">
             <div className="bg-transparent rounded-lg transition-all duration-200">
               <ChatInput 
