@@ -11,6 +11,7 @@ import { useAuth } from '@/components/auth/auth-provider'
 import ChatSidebar from './chat-sidebar'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { RagStatusIndicator } from './rag-status-indicator'
 
 
 export default function ChatInterface({ chatbotId = 'bibleproject' }) {  
@@ -291,7 +292,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
             
 Use this information to answer the question. If the information doesn't contain the answer, use your general knowledge but acknowledge this.
 
-IMPORTANT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${rerankedSources.length} sources available.
+IMPORTANT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. EVERY ANSWER MUST CITE SOURCES. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${rerankedSources.length} sources available.
 
 Context:
 ${contextText}`
@@ -358,34 +359,26 @@ ${contextText}`
 
         {/* Status indicator */}
         <div className="absolute bottom-20 left-0 right-0 px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            {status === 'ready' && ragStatus === 'idle' && (
-              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
-                Ready to chat!
-              </span>
-            )}
-            {(status === 'streaming' || status === 'submitted') && (
-              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
-                AI is responding...
-              </span>
-            )}
+          <div className="max-w-2xl mx-auto flex justify-center">
+            {/* {status === 'ready' && ragStatus === 'idle' && (
+              <RagStatusIndicator status="idle" />
+            )} */}
+            {/* {(status === 'streaming' || status === 'submitted') && (
+             <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
+              AI is responding...
+            </span>
+            )} */}
             {ragStatus === 'planning' && (
-              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
-                Planning response...
-              </span>
+              <RagStatusIndicator status="planning" />
             )}
             {ragStatus === 'searching' && (
-              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
-                Searching knowledge base...
-              </span>
+              <RagStatusIndicator status="searching" />
             )}
             {ragStatus === 'summarizing' && (
-              <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
-                Preparing response...
-              </span>
+              <RagStatusIndicator status="summarizing" />
             )}
             {status === 'error' && (
-              <span className="text-sm text-red-500">
+              <span className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-full backdrop-blur-sm">
                 Error occurred. Please try again.
               </span>
             )}
