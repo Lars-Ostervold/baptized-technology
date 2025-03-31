@@ -25,14 +25,33 @@ export function ChatInput({
   // Local state for immediate visual feedback
   const [isSubmitting, setIsSubmitting] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   const isReady = status !== 'streaming' && status !== 'submitted' && !isSubmitting
   
+  // Expose form reference to parent components
+  useEffect(() => {
+    // Make the form reference available to window for programmatic submission
+    if (formRef.current) {
+      (window as any).__chatFormElement = formRef.current
+    }
+    
+    return () => {
+      // Clean up reference when component unmounts
+      delete (window as any).__chatFormElement
+    }
+  }, [formRef])
+
   // Reset submitting state when parent status changes to ready
   useEffect(() => {
     if (status === 'ready') {
       setIsSubmitting(false)
+      
+      // Ensure the textarea is clear when ready
+      if (input === '') {
+        clearInput()
+      }
     }
-  }, [status])
+  }, [status, input])
   
   // Focus input on mount and when status changes to ready
   useEffect(() => {
@@ -54,9 +73,14 @@ export function ChatInput({
     if (input.trim() && isReady) {
       // Set submitting state immediately
       setIsSubmitting(true)
-      // Clear input immediately on submit
-      clearInput()
+      
+      // First submit the form
       handleSubmit(e)
+      
+      // Then clear the input (after a very short delay to ensure the submission picked up the input)
+      setTimeout(() => {
+        clearInput()
+      }, 10)
     }
   }
 
@@ -67,9 +91,14 @@ export function ChatInput({
       if (input.trim() && isReady) {
         // Set submitting state immediately
         setIsSubmitting(true)
-        // Clear input immediately on submit
-        clearInput()
+        
+        // First submit the form
         handleSubmit(e as unknown as FormEvent)
+        
+        // Then clear the input (after a very short delay to ensure the submission picked up the input)
+        setTimeout(() => {
+          clearInput()
+        }, 10)
       }
     }
   }
@@ -80,10 +109,16 @@ export function ChatInput({
       target: { value: '' } 
     } as ChangeEvent<HTMLTextAreaElement>
     handleInputChange(event)
+    
+    // Also directly clear the textarea value as a backup
+    if (textareaRef.current) {
+      textareaRef.current.value = ''
+      textareaRef.current.style.height = 'auto'
+    }
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative">
+    <form ref={formRef} onSubmit={onSubmit} className="relative">
       <div className={cn(
         "relative rounded-lg transition-all duration-200",
         (status === 'streaming' || status === 'submitted' || isSubmitting)

@@ -25,11 +25,13 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
       })
     }
 
+
     // Create a streaming response using AI SDK
     const result = streamText({
       model: openai('gpt-4o-mini'),
       messages: processedMessages,
     })
+
 
     // Return streaming response
     return result.toDataStreamResponse()

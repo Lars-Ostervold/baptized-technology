@@ -25,6 +25,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
   const [isLoadingChat, setIsLoadingChat] = useState(false)
+  const [isExampleSubmission, setIsExampleSubmission] = useState(false)
 
   // RAG status
   type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing'
@@ -164,15 +165,40 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     }
   }
 
-
+  //This is a little tricky. Because useChat depends on the form element, we need to create a new submit event on the form element. We cannot just call the handleSubmit function because then useChat doesn't know to hit the chat API.
   const handleExampleClick = (example: string) => {
+    // Don't do anything if already loading
+    if (isLoading) return
+    
+    // Set flag that this is an example submission
+    setIsExampleSubmission(true)
+    
+    // Update the input state with the example text
     handleInputChange({ target: { value: example } } as React.ChangeEvent<HTMLInputElement>)
-    handleSubmit({ preventDefault: () => {} } as React.FormEvent)
+    
+    // Create and dispatch a submit event on the chat form using the exposed reference
+    setTimeout(() => {
+      // Try to get the form reference from the window object
+      const formElement = (window as any).__chatFormElement || document.querySelector('form')
+      
+      if (formElement) {
+        const submitEvent = new Event('submit', { cancelable: true, bubbles: true })
+        formElement.dispatchEvent(submitEvent)
+      }
+      
+      // Reset the example submission flag
+      setTimeout(() => {
+        setIsExampleSubmission(false)
+      }, 100)
+    }, 50) // Small delay to ensure input state is updated
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    
+    // Get the text to submit from input
+    const textToSubmit = input.trim()
+    
     // Don't do anything if no input or already loading
     if (!input.trim() || isLoading) return
     
@@ -236,7 +262,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       
       if (!isRelevant) {
         // If query is off-topic, proceed with regular chat
-        console.log('Query is off-topic, proceeding with regular chat')
         setCurrentMessageSources([]) // Clear sources for off-topic queries
         originalHandleSubmit(e)
         return
@@ -320,8 +345,6 @@ ${contextText}`
       // Reset RAG status to idle
       setRagStatus('idle')
     }
-
-    console.log('status after handleSubmit', status)
   }
 
   return (
