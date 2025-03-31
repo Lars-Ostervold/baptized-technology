@@ -25,6 +25,10 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
       })
     }
 
+    // Print the system message for debugging
+    const systemMessage = processedMessages.find(msg => msg.role === 'system')
+    console.log('System message:', systemMessage?.content)
+
     // Create a streaming response using AI SDK
     const result = streamText({
       model: openai('gpt-4o-mini'),
