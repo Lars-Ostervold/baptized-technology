@@ -198,77 +198,58 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
         const lines = text.split('\n');
         
         lines.forEach((line, lineIndex) => {
-          if (lineIndex > 0) {
-            // Process any markdown in the current paragraph
-            paragraphs.push(
-              <p key={`p-${index}-${lineIndex-1}`} className="mt-2">
-                {currentParagraphParts.map((part, i) => {
-                  if (React.isValidElement(part) && part.type === React.Fragment) {
-                    return formatMarkdownText(part.props.children as string);
-                  }
-                  return part;
-                })}
-              </p>
-            );
-            currentParagraphParts = [];
+          // Check if the line is a header
+          const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+          if (headerMatch) {
+            // If we have existing content, add it as a paragraph first
+            if (currentParagraphParts.length > 0) {
+              paragraphs.push(
+                <p key={`p-${index}-${lineIndex}`} className="leading-relaxed">
+                  {currentParagraphParts.map((part, i) => {
+                    if (React.isValidElement(part) && part.type === React.Fragment) {
+                      return formatMarkdownText(part.props.children as string);
+                    }
+                    return part;
+                  })}
+                </p>
+              );
+              currentParagraphParts = [];
+            }
             
-            // Check if the line is a header
-            const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
-            if (headerMatch) {
-              const level = headerMatch[1].length;
-              const headerText = headerMatch[2];
-              
-              const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+            // Add the header
+            const level = headerMatch[1].length;
+            const headerText = headerMatch[2];
+            
+            const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
+            paragraphs.push(
+              <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-6 mb-4">
+                {formatMarkdownText(headerText)}
+              </HeaderTag>
+            );
+          } else if (line.trim() === '') {
+            // Handle empty lines - add current paragraph if exists
+            if (currentParagraphParts.length > 0) {
               paragraphs.push(
-                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-6 mb-4">
-                  {formatMarkdownText(headerText)}
-                </HeaderTag>
+                <p key={`p-${index}-${lineIndex}`} className="leading-relaxed">
+                  {currentParagraphParts.map((part, i) => {
+                    if (React.isValidElement(part) && part.type === React.Fragment) {
+                      return formatMarkdownText(part.props.children as string);
+                    }
+                    return part;
+                  })}
+                </p>
               );
-            } else {
-              // Add this line to a new paragraph
-              currentParagraphParts.push(
-                <React.Fragment key={`line-${index}-${lineIndex}`}>
-                  {line}
-                </React.Fragment>
-              );
+              currentParagraphParts = [];
             }
+            // Add empty line spacing
+            paragraphs.push(<div key={`empty-${index}-${lineIndex}`} className="h-4" />);
           } else {
-            // Check if the line is a header
-            const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
-            if (headerMatch) {
-              // If we have existing content, add it as a paragraph first
-              if (currentParagraphParts.length > 0) {
-                paragraphs.push(
-                  <p key={`p-before-h-${index}`} className="mt-2">
-                    {currentParagraphParts.map((part, i) => {
-                      if (React.isValidElement(part) && part.type === React.Fragment) {
-                        return formatMarkdownText(part.props.children as string);
-                      }
-                      return part;
-                    })}
-                  </p>
-                );
-                currentParagraphParts = [];
-              }
-              
-              // Add the header
-              const level = headerMatch[1].length;
-              const headerText = headerMatch[2];
-              
-              const HeaderTag = `h${level}` as keyof JSX.IntrinsicElements;
-              paragraphs.push(
-                <HeaderTag key={`h-${index}-${lineIndex}`} className="font-bold mt-6 mb-4">
-                  {formatMarkdownText(headerText)}
-                </HeaderTag>
-              );
-            } else {
-              // Add to current paragraph
-              currentParagraphParts.push(
-                <React.Fragment key={`line-${index}-${lineIndex}`}>
-                  {line}
-                </React.Fragment>
-              );
-            }
+            // Add to current paragraph
+            currentParagraphParts.push(
+              <React.Fragment key={`line-${index}-${lineIndex}`}>
+                {line}
+              </React.Fragment>
+            );
           }
         });
       } else {
@@ -283,7 +264,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
   // Add the last paragraph if there's anything left
   if (currentParagraphParts.length > 0) {
     paragraphs.push(
-      <p key="last-paragraph" className="mt-2">
+      <p key="last-paragraph" className="leading-relaxed">
         {currentParagraphParts.map((part, i) => {
           if (React.isValidElement(part) && part.type === React.Fragment) {
             return formatMarkdownText(part.props.children as string);
@@ -294,5 +275,5 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
     );
   }
   
-  return <div className="space-y-1">{paragraphs}</div>;
+  return <div>{paragraphs}</div>;
 } 
