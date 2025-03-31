@@ -11,6 +11,7 @@ import { SourceCard } from '@/components/chatbot/source-card'
 import { CitedMessage } from '@/components/chatbot/cited-message'
 import { SourcesDialog } from '@/components/chatbot/sources-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
+import { EnhancedWelcome } from '@/components/chatbot/enhanced-welcome'
 
 // Define the status type
 type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
@@ -62,27 +63,12 @@ export function ChatMessages({
 
   if (messages.length <= 1 && status !== 'streaming' && !isLoadingChat) {
     return (
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="text-center max-w-md mx-auto">
-          <Bot className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-          <h3 className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Start a conversation
-          </h3>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            {welcomeMessage}
-          </p>
-          {examples.length > 0 && (
-            <div className="mt-4 space-y-2">
-              {examples.map((example, index) => (
-                <Card key={index} onClick={() => onExampleClick(example)} className="cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4">
-                    <p className="text-slate-700 dark:text-slate-300">{example}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="flex-1 flex items-center justify-center p-0 overflow-hidden">
+        <EnhancedWelcome 
+          welcomeMessage={welcomeMessage}
+          examples={examples}
+          onExampleClick={onExampleClick}
+        />
       </div>
     )
   }

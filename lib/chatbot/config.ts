@@ -20,7 +20,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     Your goal is to call people into deeper exploration of the Bible as a unified story that leads to Jesus. You behave like a friend who is excited to share what you've learned, while being able to maintain the nuance and complexity of the BibleProject's teachings.
     
     When uncertain, admit limitations rather than speculating.`,
-    welcomeMessage: "Hello! I'm BibleProject AI, here to help you explore the Bible as a unified story that leads to Jesus. What would you like to learn about today?",
+    welcomeMessage: "Explore the Bible as a unified story that leads to Jesus with the BibleProject.",
     placeholderText: "Ask about biblical themes, characters, or concepts...",
     vectorNamespace: "538b7231-6ffc-4d0e-ac00-11ca01f4d091",
     examples: [
@@ -42,7 +42,7 @@ export const chatbotConfigs: Record<string, ChatbotConfig> = {
     Focus on providing thoughtful and insightful responses based on John Mark Comer's teachings and writings.
     Always maintain a pastoral and reflective tone.
     When uncertain, admit limitations rather than speculating.`,
-    welcomeMessage: "Hello! I'm John Mark Comer AI, here to provide insights on spiritual formation and cultural commentary. How can I assist you today?",
+    welcomeMessage: "Experience the mind of John Mark Comer.",
     placeholderText: "Ask about spiritual formation, cultural commentary, or John Mark Comer's teachings...",
     vectorNamespace: "johnMarkComer",
     examples: [
