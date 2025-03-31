@@ -21,13 +21,74 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const { user } = useAuth()
   // Chat session state
   const [activeChatId, setActiveChatId] = useState<string | null>(null)
-  const [isMobileView] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
+  // Mobile detection using window width
+  const [isMobileView, setIsMobileView] = useState(false)
+  
+  // Initialize mobile view detection properly on client side
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 768)
+    }
+    
+    // Initial check
+    checkMobileView()
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobileView)
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobileView)
+  }, [])
+  
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
   const [showExpandButton, setShowExpandButton] = useState(true)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
   const [isLoadingChat, setIsLoadingChat] = useState(false)
   const [isExampleSubmission, setIsExampleSubmission] = useState(false)
+
+  // Chat history state and caching
+  const [chatHistory, setChatHistory] = useState<any[]>([])
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  const [historyError, setHistoryError] = useState("")
+  const [lastHistoryFetch, setLastHistoryFetch] = useState<number>(0)
+  const HISTORY_CACHE_DURATION = 5 * 60 * 1000 // 5 minutes in milliseconds
+
+  // Fetch chat history once when component mounts or when explicitly refreshed
+  useEffect(() => {
+    if (user) {
+      const now = Date.now()
+      // Only fetch if cache is empty or expired, or if refreshTrigger changed
+      if (chatHistory.length === 0 || now - lastHistoryFetch > HISTORY_CACHE_DURATION || refreshChatTrigger > 0) {
+        fetchChatHistory()
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, refreshChatTrigger])
+
+  const fetchChatHistory = async () => {
+    if (!user) return
+    
+    setIsLoadingHistory(true)
+    setHistoryError("")
+    
+    try {
+      const response = await fetch('/api/chats')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch chat history')
+      }
+      
+      const data = await response.json()
+      setChatHistory(data.filter((chat: any) => chat.chatbot_id === config.vectorNamespace))
+      setLastHistoryFetch(Date.now())
+    } catch (err) {
+      setHistoryError("Error loading chat history")
+      console.error(err)
+    } finally {
+      setIsLoadingHistory(false)
+    }
+  }
 
   // RAG status
   type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing'
@@ -165,6 +226,9 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     if (isMobileView) {
       setSidebarOpen(false)
     }
+
+    // Refresh chat history to include the new chat
+    setRefreshChatTrigger(prev => prev + 1)
   }
 
   //This is a little tricky. Because useChat depends on the form element, we need to create a new submit event on the form element. We cannot just call the handleSubmit function because then useChat doesn't know to hit the chat API.
@@ -371,8 +435,12 @@ ${contextText}`
         <Button
           variant="outline"
           size="icon"
-          className="absolute top-2 left-2 z-20 md:hidden"
-          onClick={() => setSidebarOpen(true)}
+          className="absolute top-2 left-2 z-30 md:hidden"
+          onClick={() => {
+            setSidebarOpen(true)
+            // Also make sure sidebar is not collapsed in mobile view
+            setSidebarCollapsed(false)
+          }}
         >
           <Menu size={18} />
         </Button>
@@ -391,18 +459,33 @@ ${contextText}`
       )}
       
       {/* Sidebar for chat history */}
-      {user && ((!isMobileView) || sidebarOpen) && (
+      {user && ((!isMobileView && !sidebarCollapsed) || (isMobileView && sidebarOpen)) && (
         <div className={`${isMobileView ? "absolute z-50 h-full" : ""}`}>
           <ChatSidebar 
             activeChatId={activeChatId}
-            onChatSelected={handleChatSelected}
-            onNewChat={handleNewChat}
+            onChatSelected={(chatId) => {
+              handleChatSelected(chatId)
+              // On mobile, close sidebar after selecting a chat
+              if (isMobileView) {
+                setSidebarOpen(false)
+              }
+            }}
+            onNewChat={() => {
+              handleNewChat()
+              // On mobile, close sidebar after creating a new chat
+              if (isMobileView) {
+                setSidebarOpen(false)
+              }
+            }}
             chatbotId={config.vectorNamespace}
             refreshTrigger={refreshChatTrigger}
-            isCollapsed={sidebarCollapsed}
+            isCollapsed={!isMobileView && sidebarCollapsed}
             onToggleCollapse={handleToggleSidebar}
             isMobileView={isMobileView}
             onCloseMobile={() => setSidebarOpen(false)}
+            chats={chatHistory}
+            isLoading={isLoadingHistory}
+            error={historyError}
           />
         </div>
       )}
