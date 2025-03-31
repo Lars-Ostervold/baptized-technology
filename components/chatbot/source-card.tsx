@@ -1,71 +1,25 @@
-import { 
-  Book, 
-  Podcast, 
-  Video, 
-  FileText, 
-  Link as LinkIcon, 
-  BookOpen, 
-  FileTextIcon,
-  ScrollText,
-  MessageSquare, 
-  Globe, 
-  Mic, 
-  Newspaper
-} from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Source } from '@/lib/chatbot/types';
+import { UrlMetadata } from './url-metadata';
 
 interface SourceCardProps {
   source: Source;
 }
 
 export function SourceCard({ source }: SourceCardProps) {
-  // Choose icon based on source type
-  const getSourceIcon = () => {
-    const type = source.type;
-    
-    switch(type) {
-      case 'book':
-        return <Book className="h-6 w-6" />;
-      case 'podcast':
-        return <Podcast className="h-6 w-6" />;
-      case 'video':
-        return <Video className="h-6 w-6" />;
-      case 'bible':
-        return <BookOpen className="h-6 w-6" />;
-      case 'article':
-        return <FileTextIcon className="h-6 w-6" />;
-      case 'blog':
-        return <MessageSquare className="h-6 w-6" />;
-      case 'website':
-        return <Globe className="h-6 w-6" />;
-      case 'speech':
-        return <Mic className="h-6 w-6" />;
-      case 'research_paper':
-        return <ScrollText className="h-6 w-6" />;
-      default:
-        return <FileText className="h-6 w-6" />;
-    }
-  };
   // Helper function to format timestamps
   const formatTimestamp = (timestamp: string | number): string => {
     if (typeof timestamp === 'number') {
-      // If timestamp is a number of seconds, format as MM:SS
       const minutes = Math.floor(timestamp / 60);
       const seconds = timestamp % 60;
       return `${minutes}:${seconds.toString().padStart(2, '0')}`;
     } else if (typeof timestamp === 'string') {
-      // If timestamp is already a string in HH:MM:SS or MM:SS format, use it directly
-      // Validate it matches expected format
       if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(timestamp)) {
         return timestamp;
       } else {
-        // If string but in unexpected format, return as-is
         return timestamp;
       }
     }
-    
-    // Fallback for unexpected types
     return String(timestamp);
   };
   
@@ -105,8 +59,8 @@ export function SourceCard({ source }: SourceCardProps) {
         break;
         
       case 'article':
-      if (source.metadata.page) details.push(`Page ${source.metadata.page}`);
-      if (source.metadata.publication_date) {
+        if (source.metadata.page) details.push(`Page ${source.metadata.page}`);
+        if (source.metadata.publication_date) {
           const date = new Date(source.metadata.publication_date);
           details.push(date.toLocaleDateString());
         }
@@ -141,7 +95,6 @@ export function SourceCard({ source }: SourceCardProps) {
         break;
         
       case 'website':
-        // Most website information will be shown in the URL link
         break;
         
       case 'bible':
@@ -161,15 +114,19 @@ export function SourceCard({ source }: SourceCardProps) {
       className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer shadow-sm rounded-lg"
       onClick={() => source.url && window.open(source.url, '_blank', 'noopener,noreferrer')}
     >
-      <CardContent className="p-3">
-        <div className="flex gap-2">
-          <div className="flex-shrink-0 flex items-center text-slate-700 dark:text-slate-300">
-            {getSourceIcon()}
+      <CardContent className="p-4">
+        <div className="flex gap-4 items-center">
+          <div className="flex-shrink-0 flex items-center justify-center text-slate-700 dark:text-slate-300">
+            {source.url ? (
+              <UrlMetadata url={source.url} type={source.type} />
+            ) : (
+              <UrlMetadata url="" type={source.type} />
+            )}
           </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium">{source.title}</span>
+          <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+            <span className="text-sm font-medium line-clamp-2">{source.title}</span>
             {formatMetadata() && (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
                 {formatMetadata()}
               </p>
             )}
