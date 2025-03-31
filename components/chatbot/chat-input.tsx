@@ -24,9 +24,43 @@ export function ChatInput({
 }: ChatInputProps) {
   // Local state for immediate visual feedback
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [truncatedPlaceholder, setTruncatedPlaceholder] = useState(placeholder)
+  const [isMobile, setIsMobile] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const isReady = status !== 'streaming' && status !== 'submitted' && !isSubmitting
+  
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    // Initial check
+    checkMobile()
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobile)
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+  
+  // Handle long placeholder text
+  useEffect(() => {
+    if (isMobile) {
+      // Calculate a reasonable max length for mobile (approximately 2 lines)
+      const maxLength = 80 // Approximate character count for 2 lines on mobile
+      
+      if (placeholder.length > maxLength) {
+        setTruncatedPlaceholder(placeholder.substring(0, maxLength) + '...')
+      } else {
+        setTruncatedPlaceholder(placeholder)
+      }
+    } else {
+      setTruncatedPlaceholder(placeholder)
+    }
+  }, [placeholder, isMobile])
   
   // Expose form reference to parent components
   useEffect(() => {
@@ -63,8 +97,12 @@ export function ChatInput({
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
+      // Reset height first to get accurate scrollHeight
       textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+      
+      // Calculate new height, but limit it to approx 2 lines (76px)
+      const newHeight = Math.min(textareaRef.current.scrollHeight, 76)
+      textareaRef.current.style.height = `${newHeight}px`
     }
   }, [input])
 
@@ -132,7 +170,7 @@ export function ChatInput({
           onKeyDown={handleKeyDown}
           placeholder={(status === 'streaming' || status === 'submitted' || isSubmitting) 
             ? "Working on your request..." 
-            : placeholder}
+            : truncatedPlaceholder}
           disabled={!isReady}
           rows={1}
           className={cn(
@@ -148,8 +186,10 @@ export function ChatInput({
           )}
           style={{ 
             minHeight: '44px',
+            maxHeight: '76px', // Approximately 2 lines
             lineHeight: '1.5rem',
-            paddingTop: '10px'
+            paddingTop: '10px',
+            textOverflow: 'ellipsis'
           }}
         />
         
