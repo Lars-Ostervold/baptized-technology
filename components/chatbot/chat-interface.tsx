@@ -523,7 +523,7 @@ ${contextText}`
         </div>
         
         {/* Floating input at bottom */}
-        <div className="absolute bottom-6 left-0 right-0 px-4 z-50">
+        <div className="absolute bottom-6 left-0 right-0 px-4 z-40">
           <div className="max-w-2xl mx-auto">
             <div className="bg-transparent rounded-lg transition-all duration-200">
               <ChatInput 
