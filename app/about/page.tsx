@@ -1,180 +1,225 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import {  
   BookOpen, 
-  User, 
   GitFork,  
   Heart,
-  SendHorizonal
+  SendHorizonal,
+  ChevronRight,
+  Check
 } from "lucide-react"
 import WaterBackground from "@/components/water-background"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import {ContactDialog} from "@/components/contact-dialog"
+import { ContactDialog } from "@/components/contact-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function AboutPage() {
   return (
-    <div className="container max-w-7xl py-20 relative z-10">
+    <div className="relative">
       <WaterBackground />
       
-      <section className="space-y-6 text-center mb-16">
-        <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-          About Baptized Technology
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Creating tools that help you encounter Jesus more deeply through Scripture
-        </p>
-      </section>
+      {/* Hero Section with improved styling */}
+      <div className="container max-w-7xl py-24 relative z-10">
+        <section className="space-y-8 text-center mb-24">
+          <Badge className="mb-4 px-4 py-1.5 text-sm font-medium bg-primary/10 text-primary border-primary/20 rounded-full">Our Story</Badge>
+          <h1 className="text-5xl font-bold tracking-tight lg:text-7xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            About Baptized Technology
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Creating tools that help you encounter Jesus more deeply through Scripture.
+          </p>
+        </section>
 
-      <section className="grid gap-12 lg:grid-cols-2 items-center mb-20">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold">Who We Are</h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            Hi, I&apos;m Lars—the sole developer behind Baptized Technology. This project emerged from my own 
-            journey with Scripture and my experiences with BibleProject and other transformative biblical resources.
-          </p>
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            At its core, Baptized Technology isn&apos;t about me. It&apos;s about Jesus. It&apos;s about creating tools 
-            that lead people deeper into relationship with Him and drive them to action in bringing Shalom to the world.
-          </p>
-        </div>
-        <div className="rounded-lg overflow-hidden bg-muted/50 p-6 border border-border">
-          <div className="space-y-6">
-            <User className="h-12 w-12 text-primary" />
-            <h3 className="text-xl font-semibold">A One-Person Mission</h3>
-            <p className="text-muted-foreground">
-              While I&apos;m the only one running this project, it exists to serve a much larger purpose—connecting 
-              people with the wisdom of Scripture and two millennia of Spirit-led biblical scholarship.
+        <section className="mb-32">
+          <div className="max-w-3xl mx-auto space-y-6 relative">
+            <div className="absolute -left-6 -top-6 w-20 h-20 bg-primary/10 rounded-full blur-2xl"></div>
+            <h2 className="text-4xl font-bold relative">
+              <span className="relative">
+                Who We Are
+                <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 150 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 5.5C50 1.5 100 1.5 149 5.5" stroke="hsl(var(--primary) / 0.4)" strokeWidth="6" strokeLinecap="round" />
+                </svg>
+              </span>
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Hi 👋, I&apos;m Lars—the developer behind Baptized Technology. This project grew out of my own
+              journey with Scripture and the transformative impact of biblical resources like BibleProject.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              But Baptized Technology isn&apos;t about me. It&apos;s about Jesus. It&apos;s about crafting tools that
+              guide people deeper into relationship with Him and equip them to live out His mission in the world.
             </p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mb-20">
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="text-3xl font-bold">What We Do</h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            We develop technology that serves as a bridge to biblical wisdom, not a replacement for it.
-          </p>
-        </div>
-        
-        <div className="grid gap-8 lg:gap-16 md:grid-cols-2 mb-12">
-          <Card className="bg-background/50 border-border">
-            <CardContent className="pt-6 space-y-4">
-              <BookOpen className="h-10 w-10 text-primary" />
-              <h3 className="text-xl font-semibold">Knowledge Tools for Specific Domains</h3>
-              <p className="text-muted-foreground">
-                Our tools focus on narrow, knowledge-based domains in biblical studies. 
-                Think of them as digital assistants that connect you with trusted resources 
-                for specific topics, books, or areas of study.
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="bg-background/50 border-border">
-            <CardContent className="pt-6 space-y-4">
-              <GitFork className="h-10 w-10 text-primary" />
-              <h3 className="text-xl font-semibold">Open-Source Development</h3>
-              <p className="text-muted-foreground">
-                All our tools are open-sourced on GitHub. We believe in transparency and 
-                community contribution—these resources belong to the body of Christ, 
-                not to any single person or organization.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+        {/* What We Do section with tabs */}
+        <section className="mb-32">
+          <div className="text-center mb-16 space-y-6">
+            <h2 className="text-4xl font-bold">
+              <span className="relative">
+                What We Do
+                <div className="absolute -bottom-3 left-0 h-2 w-full bg-primary/20 -z-10 transform -rotate-1"></div>
+              </span>
+            </h2>
 
-      <section className="mb-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold">Frequently Asked Questions</h2>
-        </div>
-        
-        <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger>Are these AI bots replacing human teachers?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground">
-                  Absolutely not. These tools are designed to point to Jesus and the wisdom of human 
-                  teachers, not replace them. We believe deeply in the value of human relationship 
-                  and community for spiritual growth. Our tools simply help you access insights 
-                  from trusted sources more efficiently.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-2">
-              <AccordionTrigger>Where does the information come from?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground">
-                  Our tools only relay information from trusted, biblical sources that we&apos;ve 
-                  specifically selected and trained them on. They don&apos;t generate their own theology 
-                  or draw from general internet knowledge. We&apos;re committed to sourcing wisdom from 
-                  reliable teachers and always pointing you back to those original resources.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-3">
-              <AccordionTrigger>How can I support this project?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground">
-                  You can support us through prayer, financial contributions, or by contributing 
-                  to our open-source projects on GitHub. As a one-person operation, every form of 
-                  support makes a significant difference in helping these tools reach more people.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-4">
-              <AccordionTrigger>What&apos;s the relationship with BibleProject?</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-muted-foreground">
-                  We deeply appreciate BibleProject&apos;s work and have been personally transformed by 
-                  their content. Some of our tools help you find and access BibleProject resources 
-                  more efficiently, but Baptized Technology is an independent project not officially 
-                  affiliated with BibleProject.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
-      </section>
-
-      <section className="text-center mb-20">
-        <div className="max-w-3xl mx-auto bg-muted/30 p-8 rounded-lg border border-border">
-          <div className="space-y-6">
-            <Heart className="h-12 w-12 text-primary mx-auto" />
-            <h2 className="text-3xl font-bold">Support Our Mission</h2>
-            <p className="text-lg text-muted-foreground">
-              Baptized Technology is a labor of love created to serve the Church. 
-              Your support helps us develop more tools and keep them freely accessible.
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              We develop technology that serves as a bridge to biblical wisdom, not a replacement for it.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="font-semibold">
-                <Link href="/support">
-                  <SendHorizonal className="mr-2 h-4 w-4" /> Support Financially
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="font-semibold">
-                <a href="https://github.com/baptizedtechnology" target="_blank" rel="noopener noreferrer">
-                  <GitFork className="mr-2 h-4 w-4" /> Contribute on GitHub
-                </a>
-              </Button>
+          </div>
+          
+          <Tabs defaultValue="tools" className="w-full max-w-4xl mx-auto">
+            <TabsList className="grid grid-cols-2 w-[400px] mx-auto mb-8">
+              <TabsTrigger value="tools">Our Tools</TabsTrigger>
+              <TabsTrigger value="development">Our Process</TabsTrigger>
+            </TabsList>
+            <TabsContent value="tools" className="p-6 rounded-2xl bg-background/50 backdrop-blur-sm border border-primary/10 shadow-lg">
+              <div className="space-y-8">
+                <div className="flex items-start gap-4">
+                  <BookOpen className="h-10 w-10 text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-2">Knowledge Tools for Biblical Study</h3>
+                    <p className="text-muted-foreground">
+                      Our tools focus on specific areas of biblical study, functioning as digital assistants that
+                      connect you with trusted resources for deeper scriptural engagement.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                  {[
+                    "Access insights from biblical scholars",
+                    "Find connections across Scripture",
+                    "Study Bible in its historical context",
+                    "Discover ancient wisdom for today"
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-primary/5 p-4 rounded-lg">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="development" className="p-6 rounded-2xl bg-background/50 backdrop-blur-sm border border-primary/10 shadow-lg">
+              <div className="space-y-8">
+                <div className="flex items-start gap-4">
+                  <GitFork className="h-10 w-10 text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-2">Open-Source Development</h3>
+                    <p className="text-muted-foreground">
+                      Every tool we create is open-source on GitHub. We believe in transparency and collaboration—
+                      these resources belong to the body of Christ, not any single person or organization.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                  {[
+                    "Transparent development process",
+                    "Community contributions welcome",
+                    "Open source codebase",
+                    "Shared knowledge resources"
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-3 bg-primary/5 p-4 rounded-lg">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </section>
+
+        {/* FAQ section with improved accordion */}
+        <section className="mb-32">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold inline-block relative">
+              Frequently Asked Questions
+              <div className="absolute -bottom-3 left-0 h-2 w-full bg-primary/20 -z-10 transform -rotate-1"></div>
+            </h2>
+          </div>
+          <div className="max-w-3xl mx-auto bg-background/50 backdrop-blur-sm rounded-2xl p-8 border border-primary/10 shadow-lg">
+            <Accordion type="single" collapsible className="w-full">
+              {[
+                {
+                  question: "Are these AI tools replacing human teachers?",
+                  answer: "Not at all. These tools are designed to guide you to Jesus and the wisdom of biblical teachers, not replace them. Spiritual growth happens in relationship and community—our tools simply help you access biblical insights more effectively."
+                },
+                {
+                  question: "Where does the information come from?",
+                  answer: "Our tools relay information only from trusted biblical sources. They don't generate new theology or pull from the general internet. Every source is carefully selected to ensure reliability and faithfulness to Scripture."
+                },
+                {
+                  question: "How can I support this project?",
+                  answer: "You can support us through prayer, financial contributions, or by contributing to our open-source projects on GitHub. As a solo-run initiative, every form of support helps extend these tools to more people."
+                }
+              ].map((faq, i) => (
+                <AccordionItem key={i} value={`item-${i+1}`} className="border-primary/10 last:border-0">
+                  <AccordionTrigger className="text-lg font-medium hover:text-primary transition-colors py-4">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-base leading-relaxed pb-6">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+
+        {/* Support section with enhanced design */}
+        <section className="text-center mb-32">
+          <div className="max-w-4xl mx-auto relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 rounded-3xl -z-10"></div>
+            <div className="bg-background/40 backdrop-blur-sm p-10 rounded-3xl border border-primary/20 shadow-xl">
+              <div className="space-y-8">
+                <div className="rounded-full bg-primary/10 p-4 w-fit mx-auto">
+                  <Heart className="h-12 w-12 text-primary" />
+                </div>
+                <h2 className="text-4xl font-bold">Support Our Mission</h2>
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                  Baptized Technology is a labor of love created to serve the Church. Your support helps us
+                  develop more tools and keep them freely accessible.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-6 justify-center pt-4">
+                  <Button asChild size="lg" className="font-semibold text-lg px-8 py-6 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
+                    <Link href="/support">
+                      <SendHorizonal className="mr-2 h-5 w-5" /> Support Financially
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg" className="font-semibold text-lg px-8 py-6 border-primary/20 hover:bg-primary/5 transition-all duration-300">
+                    <a href="https://github.com/baptizedtechnology" target="_blank" rel="noopener noreferrer">
+                      <GitFork className="mr-2 h-5 w-5" /> Contribute on GitHub
+                    </a>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="text-center space-y-8">
-        <h2 className="text-3xl font-bold">Connect With Us</h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Have questions or suggestions? I&apos;d love to hear from you.
-        </p>
-        <ContactDialog>
-            <Button size="lg" className="font-semibold">Get in Touch</Button>
-        </ContactDialog>
-      </section>
+        {/* Contact section with enhanced design */}
+        <section className="text-center space-y-10">
+          <h2 className="text-4xl font-bold">
+            <span className="relative">
+              Connect With Us
+              <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 5.5C67 1.5 131 1.5 199 5.5" stroke="hsl(var(--primary) / 0.4)" strokeWidth="6" strokeLinecap="round" />
+              </svg>
+            </span>
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Have questions or suggestions? I&apos;d love to hear from you.
+          </p>
+          <ContactDialog>
+            <Button size="lg" className="font-semibold px-8 py-6 text-lg mt-4 bg-gradient-to-r from-primary to-primary/90 hover:opacity-90 transition-opacity shadow-lg">
+              Get in Touch <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </ContactDialog>
+        </section>
+      </div>
     </div>
   )
 }

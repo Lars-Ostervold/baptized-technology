@@ -28,10 +28,11 @@ export function ChatbotCard({
     <Card
       className={`
       relative overflow-hidden transition-all duration-300
-      ${comingSoon ? "opacity-80" : "hover:shadow-lg hover:-translate-y-1 cursor-pointer"}
+      ${comingSoon ? "opacity-70" : "hover:shadow-lg hover:-translate-y-1 cursor-pointer"}
+      bg-background/80 backdrop-blur-sm
     `}
     >
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-40`} />
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-30`} />
       <CardHeader className="relative space-y-4">
         <div className="flex items-center space-x-4">
           <div className={`p-2 rounded-lg ${iconColor} bg-background/80 backdrop-blur-sm`}>
