@@ -69,7 +69,7 @@ export default function ChatbotHeader({ title, iconName, iconColor }: ChatbotHea
           <IconComponent className="h-5 w-5" />
         </div>
         <h1 className="text-lg font-medium">
-          {title} Guide
+          {title}
         </h1>
       </div>
       {loading ? (
