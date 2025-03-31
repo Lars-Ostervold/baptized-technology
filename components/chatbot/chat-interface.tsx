@@ -24,6 +24,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [isMobileView] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
+  const [isLoadingChat, setIsLoadingChat] = useState(false)
 
   // RAG status
   type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing'
@@ -120,6 +121,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   }, [status])
 
   const handleChatSelected = async (chatId: string) => {
+    setIsLoadingChat(true)
     setActiveChatId(chatId)
     
     try {
@@ -136,6 +138,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       }
     } catch (error) {
       console.error('Error loading chat:', error)
+    } finally {
+      setIsLoadingChat(false)
     }
   }
 
@@ -355,6 +359,7 @@ ${contextText}`
           welcomeMessage={config.welcomeMessage}
           examples={config.examples}
           onExampleClick={handleExampleClick}
+          isLoadingChat={isLoadingChat}
         />
 
         {/* Status indicator */}

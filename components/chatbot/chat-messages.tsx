@@ -10,6 +10,7 @@ import type { Source, ExtendedMessage } from '@/lib/chatbot/types'
 import { SourceCard } from '@/components/chatbot/source-card'
 import { CitedMessage } from '@/components/chatbot/cited-message'
 import { SourcesDialog } from '@/components/chatbot/sources-dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 
 // Define the status type
 type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
@@ -21,6 +22,7 @@ interface ChatMessagesProps {
   welcomeMessage?: string
   examples?: string[]
   onExampleClick: (example: string) => void
+  isLoadingChat?: boolean
 }
 
 export function ChatMessages({ 
@@ -28,7 +30,8 @@ export function ChatMessages({
   status, 
   welcomeMessage = "Send a message to begin chatting with the AI assistant.", 
   examples = [], 
-  onExampleClick
+  onExampleClick,
+  isLoadingChat = false
 }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null)
   
@@ -57,7 +60,7 @@ export function ChatMessages({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  if (messages.length <= 1 && status !== 'streaming') {
+  if (messages.length <= 1 && status !== 'streaming' && !isLoadingChat) {
     return (
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="text-center max-w-md mx-auto">
@@ -88,85 +91,105 @@ export function ChatMessages({
     <>
       <div className="flex-1 overflow-y-auto pb-24 px-4 py-6 scroll-smooth">
         <div className="max-w-2xl mx-auto space-y-6">
-          {messages.map((message, i) => (
-            message.role !== "system" && (
-              <motion.div 
-                key={message.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-                className={cn(
-                  "flex items-start gap-3 group",
-                  message.role === "user" ? "justify-end" : "justify-start"
-                )}
-              >
-                {/* Avatar */}
-                <div className={cn(
-                  "rounded-full p-2 flex-shrink-0",
-                  message.role === "user" 
-                    ? "bg-slate-800 text-white dark:bg-slate-900 order-2" 
-                    : "bg-white text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
-                )}>
-                  {message.role === "user" ? (
-                    <User size={16} />
-                  ) : (
-                    <Bot size={16} />
-                  )}
+          {isLoadingChat ? (
+            // Loading skeleton UI
+            <>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <div className="mt-2 space-y-2">
+                      <Skeleton className="h-3 w-1/4" />
+                      <Skeleton className="h-3 w-1/3" />
+                    </div>
+                  </div>
                 </div>
-                
-                {/* Message bubble */}
-                <div className="flex flex-col space-y-2 max-w-[80%]">
+              ))}
+            </>
+          ) : (
+            messages.map((message, i) => (
+              message.role !== "system" && (
+                <motion.div 
+                  key={message.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className={cn(
+                    "flex items-start gap-3 group",
+                    message.role === "user" ? "justify-end" : "justify-start"
+                  )}
+                >
+                  {/* Avatar */}
                   <div className={cn(
-                    "rounded-lg px-4 py-3 shadow-sm",
+                    "rounded-full p-2 flex-shrink-0",
                     message.role === "user" 
-                      ? "bg-slate-800 text-white dark:bg-slate-900 border border-slate-700" 
-                      : "bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
+                      ? "bg-slate-800 text-white dark:bg-slate-900 order-2" 
+                      : "bg-white text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                   )}>
-                    {message.role === "assistant" ? (
-                      <CitedMessage content={message.content} sources={message.sources || []} />
+                    {message.role === "user" ? (
+                      <User size={16} />
                     ) : (
-                      message.content.split("\n").map((line, i) => (
-                        <p key={i} className={cn(
-                          "leading-relaxed",
-                          i > 0 ? "mt-4" : "",
-                          line.trim() === "" ? "h-4" : ""
-                        )}>
-                          {line || "\u00A0"}
-                        </p>
-                      ))
+                      <Bot size={16} />
                     )}
                   </div>
                   
-                  {/* Show sources for AI messages when they exist */}
-                  {message.role === "assistant" && 
-                   message.sources && 
-                   message.sources.length > 0 && (
-                    <div className="mt-2 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">
-                          Top Sources:
-                        </p>
-                        {message.sources.length > 2 && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-6 text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 px-2"
-                            onClick={() => handleViewAllSources(message.id)}
-                          >
-                            <ExternalLink size={12} />
-                            View all {message.sources.length} sources
-                          </Button>
-                        )}
-                      </div>
-                      {message.sources.slice(0, 2).map((source) => (
-                        <SourceCard key={source.id} source={source} />
-                      ))}
+                  {/* Message bubble */}
+                  <div className="flex flex-col space-y-2 max-w-[80%]">
+                    <div className={cn(
+                      "rounded-lg px-4 py-3 shadow-sm",
+                      message.role === "user" 
+                        ? "bg-slate-800 text-white dark:bg-slate-900 border border-slate-700" 
+                        : "bg-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
+                    )}>
+                      {message.role === "assistant" ? (
+                        <CitedMessage content={message.content} sources={message.sources || []} />
+                      ) : (
+                        message.content.split("\n").map((line, i) => (
+                          <p key={i} className={cn(
+                            "leading-relaxed",
+                            i > 0 ? "mt-4" : "",
+                            line.trim() === "" ? "h-4" : ""
+                          )}>
+                            {line || "\u00A0"}
+                          </p>
+                        ))
+                      )}
                     </div>
-                  )}
-                </div>
-              </motion.div>
-            )
-          ))}
+                    
+                    {/* Show sources for AI messages when they exist */}
+                    {message.role === "assistant" && 
+                     message.sources && 
+                     message.sources.length > 0 && (
+                      <div className="mt-2 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                            Top Sources:
+                          </p>
+                          {message.sources.length > 2 && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1 px-2"
+                              onClick={() => handleViewAllSources(message.id)}
+                            >
+                              <ExternalLink size={12} />
+                              View all {message.sources.length} sources
+                            </Button>
+                          )}
+                        </div>
+                        {message.sources.slice(0, 2).map((source) => (
+                          <SourceCard key={source.id} source={source} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            ))
+          )}
           
           {/* Loading indicator */}
           {status === "waiting" && (
