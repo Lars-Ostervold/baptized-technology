@@ -38,15 +38,15 @@ export default function ChatbotPage({ params }: ChatbotPageProps) {
     return (
       <>
         <ChatbotBackground />
-        <div className="h-[calc(100vh-3.5rem)] flex flex-col">
+        <div className="h-screen flex flex-col">
           {/* Pass the icon name rather than the component */}
           <ChatbotHeader 
             title={config.title}
-            iconName={iconName}  // Changed to iconName
+            iconName={iconName}
             iconColor={config.iconColor}
           />
           
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden relative">
             <ChatInterface chatbotId={params.chatbotId} />
           </div>
         </div>

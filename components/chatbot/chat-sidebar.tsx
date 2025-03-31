@@ -129,7 +129,7 @@ export default function ChatSidebar({
       )}
       
       {/* Header with New Chat button */}
-      <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex-none p-4 border-b border-slate-200 dark:border-slate-700">
         {isCollapsed ? (
           <Button 
             onClick={onNewChat} 
@@ -153,7 +153,7 @@ export default function ChatSidebar({
       
       {/* Chat history list */}
       {!isCollapsed ? (
-        <div className="flex-1 overflow-y-auto p-2">
+        <div className="flex-1 min-h-0 overflow-y-auto p-2">
           {isLoading ? (
             <div className="flex justify-center p-4">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -198,7 +198,7 @@ export default function ChatSidebar({
           )}
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto flex flex-col items-center pt-4">
+        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center pt-4">
           {chats.length > 0 && 
             <div className="space-y-2 w-full">
               {chats.slice(0, 5).map(chat => (

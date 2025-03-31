@@ -365,7 +365,7 @@ ${contextText}`
   }
 
   return (
-    <div className="flex h-full w-full relative">
+    <div className="absolute inset-0 flex">
       {/* Mobile sidebar toggle - shown when in mobile view and sidebar is closed */}
       {user && isMobileView && !sidebarOpen && (
         <Button
@@ -408,7 +408,7 @@ ${contextText}`
       )}
       
       {/* Main chat area with messages and input */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         <ChatMessages 
           messages={messagesWithSources} 
           status={status} 
@@ -422,14 +422,6 @@ ${contextText}`
         {/* Status indicator */}
         <div className="absolute bottom-20 left-0 right-0 px-4 z-50">
           <div className="max-w-2xl mx-auto flex justify-center">
-            {/* {status === 'ready' && ragStatus === 'idle' && (
-              <RagStatusIndicator status="idle" />
-            )} */}
-            {/* {(status === 'streaming' || status === 'submitted') && (
-             <span className="text-sm text-slate-500 dark:text-slate-400 animate-pulse">
-              AI is responding...
-            </span>
-            )} */}
             {ragStatus === 'planning' && (
               <RagStatusIndicator status="planning" />
             )}
