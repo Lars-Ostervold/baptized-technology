@@ -48,11 +48,17 @@ export default function ChatSidebar({
   const [chats, setChats] = useState<ChatSession[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [lastFetch, setLastFetch] = useState<number>(0)
+  const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes in milliseconds
   
-  // Fetch chat history when the component mounts
+  // Fetch chat history when the component mounts or when explicitly refreshed
   useEffect(() => {
     if (user) {
-      fetchChats()
+      const now = Date.now()
+      // Only fetch if we haven't fetched recently or if refreshTrigger has changed
+      if (now - lastFetch > CACHE_DURATION || refreshTrigger > 0) {
+        fetchChats()
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, refreshTrigger])
@@ -70,6 +76,7 @@ export default function ChatSidebar({
       
       const data = await response.json()
       setChats(data.filter((chat: ChatSession) => chat.chatbot_id === chatbotId))
+      setLastFetch(Date.now())
     } catch (err) {
       setError("Error loading chat history")
       console.error(err)
