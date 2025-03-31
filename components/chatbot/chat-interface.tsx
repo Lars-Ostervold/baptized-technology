@@ -9,7 +9,7 @@ import { getChatbotConfig } from '@/lib/chatbot/config'
 import type { Source, ExtendedMessage } from '@/lib/chatbot/types'
 import { useAuth } from '@/components/auth/auth-provider'
 import ChatSidebar from './chat-sidebar'
-import { Menu } from 'lucide-react'
+import { Menu, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RagStatusIndicator } from './rag-status-indicator'
 
@@ -23,6 +23,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [activeChatId, setActiveChatId] = useState<string | null>(null)
   const [isMobileView] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [showExpandButton, setShowExpandButton] = useState(false)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
   const [isLoadingChat, setIsLoadingChat] = useState(false)
   const [isExampleSubmission, setIsExampleSubmission] = useState(false)
@@ -347,35 +349,66 @@ ${contextText}`
     }
   }
 
+  const handleToggleSidebar = () => {
+    if (!sidebarCollapsed) {
+      // Collapsing sidebar
+      setSidebarCollapsed(true)
+      // Delay showing the expand button until the sidebar animation is mostly complete
+      setTimeout(() => {
+        setShowExpandButton(true)
+      }, 250) // Adjust timing as needed to match the sidebar transition duration
+    } else {
+      // Expanding sidebar
+      setShowExpandButton(false)
+      setSidebarCollapsed(false)
+    }
+  }
+
   return (
     <div className="flex h-full w-full relative">
-      {/* Mobile sidebar toggle */}
-      {user && isMobileView && (
+      {/* Mobile sidebar toggle - shown when in mobile view and sidebar is closed */}
+      {user && isMobileView && !sidebarOpen && (
         <Button
           variant="outline"
           size="icon"
           className="absolute top-2 left-2 z-20 md:hidden"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={() => setSidebarOpen(true)}
         >
           <Menu size={18} />
         </Button>
       )}
       
+      {/* Expand button - only shown when sidebar is collapsed and not in mobile view */}
+      {user && !isMobileView && showExpandButton && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleToggleSidebar}
+          className="absolute left-2 top-4 z-20 h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm transition-opacity duration-150 ease-in-out"
+        >
+          <ChevronRight size={12} />
+        </Button>
+      )}
+      
       {/* Sidebar for chat history */}
       {user && ((!isMobileView) || sidebarOpen) && (
-        <div className={`${isMobileView ? "absolute z-10 h-full" : ""}`}>
+        <div className={`${isMobileView ? "absolute z-50 h-full" : ""}`}>
           <ChatSidebar 
             activeChatId={activeChatId}
             onChatSelected={handleChatSelected}
             onNewChat={handleNewChat}
             chatbotId={config.vectorNamespace}
             refreshTrigger={refreshChatTrigger}
+            isCollapsed={sidebarCollapsed}
+            onToggleCollapse={handleToggleSidebar}
+            isMobileView={isMobileView}
+            onCloseMobile={() => setSidebarOpen(false)}
           />
         </div>
       )}
       
       {/* Main chat area with messages and input */}
-      <div className={`flex-1 flex flex-col h-full overflow-hidden relative ${user && !isMobileView ? "ml-0" : ""}`}>
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         <ChatMessages 
           messages={messagesWithSources} 
           status={status} 
