@@ -24,6 +24,7 @@ export function ChatInput({
 }: ChatInputProps) {
   // Local state for immediate visual feedback
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
   const [truncatedPlaceholder, setTruncatedPlaceholder] = useState(placeholder)
   const [isMobile, setIsMobile] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -97,20 +98,38 @@ export function ChatInput({
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
-      // Reset height first to get accurate scrollHeight
-      textareaRef.current.style.height = 'auto'
+      const textarea = textareaRef.current;
       
-      // Calculate new height, but limit it to approx 2 lines (76px)
-      const newHeight = Math.min(textareaRef.current.scrollHeight, 76)
-      textareaRef.current.style.height = `${newHeight}px`
+      // Store original placeholder
+      const originalPlaceholder = textarea.placeholder;
+      
+      // Temporarily remove placeholder to get accurate height for input
+      textarea.placeholder = '';
+      textarea.style.height = 'auto';
+      
+      // Get height for current input
+      const inputHeight = textarea.scrollHeight;
+      
+      // Restore placeholder and measure again
+      textarea.placeholder = originalPlaceholder;
+      const heightWithPlaceholder = textarea.scrollHeight;
+      
+      // Use the larger of the two heights, but cap at max height
+      const finalHeight = Math.min(
+        Math.max(inputHeight, heightWithPlaceholder),
+        isMobile ? 120 : 76 // Allow more height on mobile
+      );
+      
+      textarea.style.height = `${finalHeight}px`;
     }
-  }, [input])
+  }, [input, truncatedPlaceholder, isMobile])
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
     if (input.trim() && isReady) {
       // Set submitting state immediately
       setIsSubmitting(true)
+      setHasInteracted(true)
       
       // First submit the form
       handleSubmit(e)
@@ -129,6 +148,7 @@ export function ChatInput({
       if (input.trim() && isReady) {
         // Set submitting state immediately
         setIsSubmitting(true)
+        setHasInteracted(true)
         
         // First submit the form
         handleSubmit(e as unknown as FormEvent)
@@ -170,7 +190,9 @@ export function ChatInput({
           onKeyDown={handleKeyDown}
           placeholder={(status === 'streaming' || status === 'submitted' || isSubmitting) 
             ? "Working on your request..." 
-            : truncatedPlaceholder}
+            : hasInteracted 
+              ? "Ask more..." 
+              : truncatedPlaceholder}
           disabled={!isReady}
           rows={1}
           className={cn(
@@ -186,10 +208,13 @@ export function ChatInput({
           )}
           style={{ 
             minHeight: '44px',
-            maxHeight: '76px', // Approximately 2 lines
+            maxHeight: isMobile ? '120px' : '76px',
             lineHeight: '1.5rem',
-            paddingTop: '10px',
-            textOverflow: 'ellipsis'
+            paddingTop: isMobile ? '12px' : '10px',
+            paddingBottom: isMobile ? '12px' : '10px',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'pre-wrap',
+            overflowY: 'auto'
           }}
         />
         
