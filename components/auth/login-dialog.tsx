@@ -21,6 +21,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'login' | 'signup' | 'magic-link'>('login')
@@ -83,6 +84,19 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
       }
 
       if (view === 'signup') {
+        // Validate confirm password
+        if (!confirmPassword) {
+          setError("Please confirm your password")
+          setIsLoading(false)
+          return
+        }
+
+        if (password !== confirmPassword) {
+          setError("Passwords do not match")
+          setIsLoading(false)
+          return
+        }
+
         // Sign up with email and password
         const { error } = await supabase.auth.signUp({
           email,
@@ -158,6 +172,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
   const resetState = () => {
     setEmail("")
     setPassword("")
+    setConfirmPassword("")
     setError(null)
     setView('login')
   }
@@ -214,6 +229,20 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+          )}
+
+          {view === 'signup' && (
+            <div className="grid gap-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
                 required
               />
