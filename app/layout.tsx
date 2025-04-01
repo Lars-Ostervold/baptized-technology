@@ -5,6 +5,7 @@ import NavbarWrapper from "@/components/navbar-wrapper"
 import { SITE_IMAGE, SITE_URL, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_TITLE } from "@/lib/constants"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { Analytics } from "@vercel/analytics/react"
+import { ToastProvider } from "@/components/ui/toast-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -49,10 +50,12 @@ export default function RootLayout({
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
         <Analytics />
         <AuthProvider>
-          <div className="relative z-10">
-            <NavbarWrapper />
-            {children}
-          </div>
+          <ToastProvider>
+            <div className="relative z-10">
+              <NavbarWrapper />
+              {children}
+            </div>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

@@ -10,6 +10,7 @@ import { Github, Apple, Loader2, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
+import { useToast } from "@/components/ui/toast-provider"
 
 interface LoginDialogProps {
   trigger?: React.ReactNode;
@@ -25,6 +26,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
   const [view, setView] = useState<'login' | 'signup' | 'magic-link'>('login')
   const router = useRouter()
   const pathname = usePathname()
+  const { showToast } = useToast()
 
   // Create Supabase client using the new SSR client
   const supabase = createClient()
@@ -64,7 +66,12 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
       } else {
         // Show success message for magic link
         setError(null)
-        alert("Check your email for the login link!")
+        showToast({
+          title: "Magic Link Sent!",
+          description: "Check your email for the login link. It may take a few minutes to arrive.",
+          variant: "success",
+          duration: 6000
+        })
         setIsOpen(false)
       }
     } else {
@@ -90,7 +97,12 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
         } else {
           // Show success message for sign up
           setError(null)
-          alert("Check your email to confirm your account!")
+          showToast({
+            title: "Account Created!",
+            description: "Check your email to confirm your account. We've sent you a verification link.",
+            variant: "success",
+            duration: 6000
+          })
           setIsOpen(false)
         }
       } else {
