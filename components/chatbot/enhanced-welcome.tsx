@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence, Variants } from 'framer-motion'
-import { Sparkles } from 'lucide-react'
+import { motion, Variants } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { ChatbotWelcomeAnimation } from './chatbot-welcome-animation'
 
 interface EnhancedWelcomeProps {

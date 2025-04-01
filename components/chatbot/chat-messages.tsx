@@ -4,9 +4,8 @@ import { useRef, useEffect, useState } from 'react'
 import { User, Bot, Loader2, ExternalLink } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import type { Source, ExtendedMessage } from '@/lib/chatbot/types'
+import type { ExtendedMessage } from '@/lib/chatbot/types'
 import { SourceCard } from '@/components/chatbot/source-card'
 import { CitedMessage } from '@/components/chatbot/cited-message'
 import { SourcesDialog } from '@/components/chatbot/sources-dialog'
@@ -107,7 +106,7 @@ export function ChatMessages({
               ))}
             </>
           ) : (
-            messages.map((message, i) => (
+            messages.map((message) => (
               message.role !== "system" && (
                 <motion.div 
                   key={message.id}

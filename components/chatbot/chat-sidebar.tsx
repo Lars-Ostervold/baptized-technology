@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useAuth } from '@/components/auth/auth-provider'
-import { PlusCircle, Loader2, History, CalendarDays, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { PlusCircle, Loader2, History, CalendarDays, ChevronLeft} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { format, isToday, isYesterday } from 'date-fns'
@@ -40,8 +39,6 @@ export default function ChatSidebar({
   activeChatId, 
   onChatSelected, 
   onNewChat,
-  chatbotId,
-  refreshTrigger = 0,
   isCollapsed = false,
   onToggleCollapse,
   isMobileView = false,

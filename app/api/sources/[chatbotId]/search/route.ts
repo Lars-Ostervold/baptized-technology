@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { embed, generateText } from 'ai'
+import { embed } from 'ai'
 import { openai } from '@/lib/openai'
 import { getAdminClient } from '@/lib/supabase'
 import { getChatbotConfig } from '@/lib/chatbot/config'
@@ -49,6 +49,7 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     const retrievalResults = await Promise.all(retrievalPromises)
     
     // Combine and deduplicate results from all queries
+    //eslint-disable-next-line prefer-const
     let combinedSources: Source[] = []
     const seenIds = new Set()
     

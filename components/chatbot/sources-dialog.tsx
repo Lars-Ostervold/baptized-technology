@@ -10,6 +10,7 @@ interface SourcesDialogProps {
   messageId: string
 }
 
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function SourcesDialog({ isOpen, onClose, sources, messageId }: SourcesDialogProps) {
   if (!sources || sources.length === 0) return null
 

@@ -63,6 +63,7 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     const retrievalResults = await Promise.all(retrievalPromises)
     
     // Combine and deduplicate results from all queries
+    //eslint-disable-next-line prefer-const
     let combinedSources: Source[] = []
     const seenIds = new Set()
     
@@ -137,6 +138,7 @@ async function generateEmbedding(text: string) {
 }
 
 // Helper function to generate a contextually enhanced query using chat history
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function generateContextualQuery(currentQuery: string, chatHistory: any[]) {
   // If there's no chat history, just use the current query
   if (!chatHistory || chatHistory.length === 0) {
@@ -150,6 +152,7 @@ async function generateContextualQuery(currentQuery: string, chatHistory: any[])
         role: "system",
         content: "You are a query enhancement assistant. Your job is to rewrite the user's latest query to include important context from the conversation history. Don't summarize the entire conversation - just enhance the latest query to make it more specific based on the conversation context. Return only the enhanced query text with no additional explanation."
       },
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...chatHistory.slice(-6).map((msg: any) => ({ 
         role: msg.role as "user" | "assistant", 
         content: msg.content 

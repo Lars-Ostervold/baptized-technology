@@ -64,7 +64,7 @@ export function ChatbotWelcomeAnimation() {
       window.removeEventListener('resize', updateDimensions)
       cancelAnimationFrame(animationFrameRef.current)
     }
-  }, [isDark])
+  }, [isDark]) //eslint-disable-line react-hooks/exhaustive-deps
 
   // Mouse movement
   useEffect(() => {
