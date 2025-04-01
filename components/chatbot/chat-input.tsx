@@ -71,7 +71,7 @@ export function ChatInput({
     
     return () => {
       // Clean up reference when component unmounts
-      delete (window as any).__chatFormElement
+      delete (window as any).__chatFormElement //eslint-disable-line @typescript-eslint/no-explicit-any
     }
   }, [formRef])
 

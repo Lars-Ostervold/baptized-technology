@@ -47,7 +47,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [isLoadingChat, setIsLoadingChat] = useState(false)
 
   // Chat history state and caching
-  const [chatHistory, setChatHistory] = useState<any[]>([])
+  const [chatHistory, setChatHistory] = useState<any[]>([]) //eslint-disable-line @typescript-eslint/no-explicit-any
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [historyError, setHistoryError] = useState("")
   const [lastHistoryFetch, setLastHistoryFetch] = useState<number>(0)
@@ -79,7 +79,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       }
       
       const data = await response.json()
-      setChatHistory(data.filter((chat: any) => chat.chatbot_id === config.vectorNamespace))
+      setChatHistory(data.filter((chat: any) => chat.chatbot_id === config.vectorNamespace)) //eslint-disable-line @typescript-eslint/no-explicit-any
       setLastHistoryFetch(Date.now())
     } catch (err) {
       setHistoryError("Error loading chat history")
@@ -242,7 +242,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     // Create and dispatch a submit event on the chat form using the exposed reference
     setTimeout(() => {
       // Try to get the form reference from the window object
-      const formElement = (window as any).__chatFormElement || document.querySelector('form')
+      const formElement = (window as any).__chatFormElement || document.querySelector('form') //eslint-disable-line @typescript-eslint/no-explicit-any
       
       if (formElement) {
         const submitEvent = new Event('submit', { cancelable: true, bubbles: true })
