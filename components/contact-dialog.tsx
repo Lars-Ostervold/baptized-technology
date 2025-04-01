@@ -9,13 +9,25 @@ import { Label } from "@/components/ui/label"
 import { MessageSquare, Loader2 } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 
-export function ContactDialog({ children }: { children?: React.ReactNode }) {
+export function ContactDialog({ 
+  children,
+  onOpenChange 
+}: { 
+  children?: React.ReactNode
+  onOpenChange?: (open: boolean) => void 
+}) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen)
+    onOpenChange?.(newOpen)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,7 +63,7 @@ export function ContactDialog({ children }: { children?: React.ReactNode }) {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {children || (
           <Button variant="ghost" className="flex items-center gap-2">
