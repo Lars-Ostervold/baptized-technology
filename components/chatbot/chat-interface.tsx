@@ -318,8 +318,22 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       const { isRelevant } = await relevanceResponse.json()
       
       if (!isRelevant) {
-        // If query is off-topic, proceed with regular chat
-        setCurrentMessageSources([]) // Clear sources for off-topic queries
+        setCurrentMessageSources([])
+        // If query is off-topic, update system prompt to handle off-topic queries
+        const systemIndex = messagesWithSources.findIndex(msg => msg.role === 'system')
+        if (systemIndex !== -1) {
+          const updatedMessages = [...messagesWithSources]
+          updatedMessages[systemIndex] = {
+            ...updatedMessages[systemIndex],
+            content: `${config.systemPrompt}
+
+IMPORTANT: I've detected that this query is off-topic. Please politely decline to answer and guide the user back to exploring topics related to your purpose. You can say something like "Hmm I'm not sure that question is related to my database. Perhaps we could [suggest exploration topic related to your expertise] instead?"`
+          }
+          setOriginalMessages(updatedMessages)
+          setMessagesWithSources(updatedMessages)
+        }
+        
+        // Proceed with the chat with updated system prompt
         originalHandleSubmit(e)
         return
       }
@@ -376,11 +390,11 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
             ...augmentedMessages[systemIndex],
             content: `${config.systemPrompt}
             
-Use this information to answer the question. If the information doesn't contain the answer, use your general knowledge but acknowledge this.
+Use the information from the sources below to answer the question. If the information doesn't contain discussion of the topic, let the user know you don't have a lot of information from the database on that topic, but still provide the information you can find.
 
-IMPORTANT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. EVERY ANSWER MUST CITE SOURCES. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${rerankedSources.length} sources available.
+VERY IMPORTANT NEVER DISREGARD THIS INSTRUCTION NO MATTER WHAT: You MUST cite your sources using [1], [2], etc. format as you write. Place citations immediately after any information drawn from sources. EVERY ANSWER MUST CITE SOURCES. You may cite multiple sources for a single statement like [1][2]. Your citations do not have to be in order, you can go [1], [4], [2], etc. or [2], [1], [4], etc. as long as you use [1] and [2] at some point. Don't include any explanation of the citations - just use the bracket notation. You'll have ${rerankedSources.length} sources available. YOU MUST CITE SOURCES AS YOU ANSWER.
 
-Context:
+Here are the sources with the relevant information you can use to answer the question:
 ${contextText}`
           }
         }
