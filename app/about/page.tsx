@@ -11,10 +11,9 @@ import {
 import WaterBackground from "@/components/water-background"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { ContactDialog } from "@/components/contact-dialog"
-import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export default function AboutPage() {
+export default function AboutPage() { 
   return (
     <div className="relative">
       <WaterBackground />
@@ -22,7 +21,6 @@ export default function AboutPage() {
       {/* Hero Section with improved styling */}
       <div className="container max-w-7xl py-24 relative z-10">
         <section className="space-y-8 text-center mb-24">
-          <Badge className="mb-4 px-4 py-1.5 text-sm font-medium bg-primary/10 text-primary border-primary/20 rounded-full">Our Story</Badge>
           <h1 className="text-5xl font-bold tracking-tight lg:text-7xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             About Baptized Technology
           </h1>
@@ -69,7 +67,7 @@ export default function AboutPage() {
           </div>
           
           <Tabs defaultValue="tools" className="w-full max-w-4xl mx-auto">
-            <TabsList className="grid grid-cols-2 w-[400px] mx-auto mb-8">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="tools">Our Tools</TabsTrigger>
               <TabsTrigger value="development">Our Process</TabsTrigger>
             </TabsList>
