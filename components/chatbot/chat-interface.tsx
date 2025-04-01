@@ -318,8 +318,21 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       const { isRelevant } = await relevanceResponse.json()
       
       if (!isRelevant) {
-        // If query is off-topic, proceed with regular chat
-        setCurrentMessageSources([]) // Clear sources for off-topic queries
+        // If query is off-topic, update system prompt to handle off-topic queries
+        const systemIndex = messagesWithSources.findIndex(msg => msg.role === 'system')
+        if (systemIndex !== -1) {
+          const updatedMessages = [...messagesWithSources]
+          updatedMessages[systemIndex] = {
+            ...updatedMessages[systemIndex],
+            content: `${config.systemPrompt}
+
+IMPORTANT: I've detected that this query is off-topic. Please politely decline to answer and guide the user back to exploring topics related to your purpose. You can say something like "Hmm I'm not sure that question is related to my database. Perhaps we could [suggest exploration topic related to your expertise] instead?"`
+          }
+          setOriginalMessages(updatedMessages)
+          setMessagesWithSources(updatedMessages)
+        }
+        
+        // Proceed with the chat with updated system prompt
         originalHandleSubmit(e)
         return
       }
