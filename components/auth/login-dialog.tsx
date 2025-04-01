@@ -1,14 +1,14 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Github, Apple, Loader2, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 
 interface LoginDialogProps {
@@ -24,14 +24,25 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'login' | 'signup' | 'magic-link'>('login')
   const router = useRouter()
+  const pathname = usePathname()
 
   // Create Supabase client using the new SSR client
   const supabase = createClient()
+
+  // Save current path to localStorage when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      localStorage.setItem('authRedirectPath', pathname || '/')
+    }
+  }, [isOpen, pathname])
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
+
+    // Get the current path for redirection
+    const redirectPath = localStorage.getItem('authRedirectPath') || '/'
 
     if (!email) {
       setError("Email is required")
@@ -44,7 +55,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectPath)}`,
         },
       })
 
@@ -70,7 +81,7 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectPath)}`,
           }
         })
 
@@ -95,7 +106,9 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
           // Success - close dialog and refresh
           setIsOpen(false)
           if (onLoginSuccess) onLoginSuccess()
-          router.refresh()
+          // Navigate to the saved redirect path
+          const redirectPath = localStorage.getItem('authRedirectPath') || '/'
+          router.push(redirectPath)
         }
       }
     }
@@ -107,11 +120,14 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
     setError(null);
     setIsLoading(true);
     
+    // Get the current path for redirection
+    const redirectPath = localStorage.getItem('authRedirectPath') || '/'
+    
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectPath)}`,
         },
       });
   
