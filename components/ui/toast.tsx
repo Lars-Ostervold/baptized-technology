@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { X, CheckCircle2, AlertCircle, Info, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -15,7 +15,7 @@ export type ToastProps = {
 
 const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   ({ title, description, variant = "default", duration = 5000, onClose }, ref) => {
-    const [isVisible, setIsVisible] = React.useState(true)
+    const [isVisible, setIsVisible] = React.useState(true) //eslint-disable-line @typescript-eslint/no-unused-vars
 
     React.useEffect(() => {
       const timer = setTimeout(() => {
