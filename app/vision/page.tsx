@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, BookOpen, Heart, Sparkles, MessageCircle, ChevronDown } from "lucide-react"
 import WaterBackground from "@/components/water-background"
-import { Badge } from "@/components/ui/badge"
 
 export default function VisionPage() {
   return (
@@ -15,13 +14,11 @@ export default function VisionPage() {
       {/* Hero Section with animated entry */}
       <div className="container max-w-7xl py-24 relative z-10">
         <section className="space-y-8 text-center mb-24 animate-fade-in">
-          <Badge className="mb-4 px-4 py-1.5 text-sm font-medium bg-primary/10 text-primary border-primary/20 rounded-full">Our Vision</Badge>
-          <h1 className="text-5xl font-bold tracking-tight lg:text-7xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Redeeming Technology,<br />Deepening Faith
+          <h1 className="text-5xl font-bold tracking-tight pb-4 lg:text-7xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Revival is Coming. <br/> Information is the Catalyst.
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            AI isn&apos;t the destination—it&apos;s a doorway. Our vision is to create tools that help believers
-            encounter Jesus and engage with the biblical story like never before.
+            The more we understand the beauty of Jesus, the more we are compelled to live out His Kingdom. Our tools put the best Christian minds at your fingertips—because revival starts with knowing the Truth.
           </p>
           <div className="flex justify-center pt-6">
             <div className="animate-bounce rounded-full bg-background/80 backdrop-blur-sm p-2 shadow-xl">
@@ -37,9 +34,9 @@ export default function VisionPage() {
               <div className="absolute -left-6 -top-6 w-20 h-20 bg-primary/10 rounded-full blur-2xl"></div>
               <h2 className="text-4xl font-bold relative">
                 <span className="relative">
-                  Wisdom 
+                  Wisdom at Your Fingertips
                   <div className="absolute -bottom-3 left-0 h-2 w-full bg-primary/20 -z-10 transform -rotate-1"></div>
-                </span> at Your Fingertips
+                </span>
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 There&apos;s a vast ocean of Christian wisdom—Scripture, theology, philosophy, and stories shaped by a baptized imagination.
