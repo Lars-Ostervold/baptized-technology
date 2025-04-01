@@ -319,19 +319,28 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       
       if (!isRelevant) {
         setCurrentMessageSources([])
-        // If query is off-topic, update system prompt to handle off-topic queries
+        // If query is off-topic, update or create system prompt to handle off-topic queries
         const systemIndex = messagesWithSources.findIndex(msg => msg.role === 'system')
-        if (systemIndex !== -1) {
-          const updatedMessages = [...messagesWithSources]
-          updatedMessages[systemIndex] = {
-            ...updatedMessages[systemIndex],
-            content: `${config.systemPrompt}
+        const updatedMessages = [...messagesWithSources]
+        
+        const offTopicSystemMessage = {
+          id: nanoid(),
+          role: "system" as const,
+          content: `${config.systemPrompt}
 
 IMPORTANT: I've detected that this query is off-topic. Please politely decline to answer and guide the user back to exploring topics related to your purpose. You can say something like "Hmm I'm not sure that question is related to my database. Perhaps we could [suggest exploration topic related to your expertise] instead?"`
-          }
-          setOriginalMessages(updatedMessages)
-          setMessagesWithSources(updatedMessages)
         }
+
+        if (systemIndex !== -1) {
+          // Update existing system message
+          updatedMessages[systemIndex] = offTopicSystemMessage
+        } else {
+          // Create new system message at the beginning
+          updatedMessages.unshift(offTopicSystemMessage)
+        }
+        
+        setOriginalMessages(updatedMessages)
+        setMessagesWithSources(updatedMessages)
         
         // Proceed with the chat with updated system prompt
         originalHandleSubmit(e)
@@ -381,14 +390,12 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
 
       // If we have context, add it to the system message
       if (contextText) {
-        // Find existing system message
+        // Find existing system message or create new one
         const systemIndex = augmentedMessages.findIndex(msg => msg.role === 'system')
-        
-        if (systemIndex !== -1) {
-          // Add instructions for citation format to the system message
-          augmentedMessages[systemIndex] = {
-            ...augmentedMessages[systemIndex],
-            content: `${config.systemPrompt}
+        const systemMessage = {
+          id: nanoid(),
+          role: "system" as const,
+          content: `${config.systemPrompt}
             
 Use the information from the sources below to answer the question. If the information doesn't contain discussion of the topic, let the user know you don't have a lot of information from the database on that topic, but still provide the information you can find.
 
@@ -396,7 +403,14 @@ VERY IMPORTANT NEVER DISREGARD THIS INSTRUCTION NO MATTER WHAT: You MUST cite yo
 
 Here are the sources with the relevant information you can use to answer the question:
 ${contextText}`
-          }
+        }
+
+        if (systemIndex !== -1) {
+          // Update existing system message
+          augmentedMessages[systemIndex] = systemMessage
+        } else {
+          // Create new system message at the beginning
+          augmentedMessages.unshift(systemMessage)
         }
       }
       
