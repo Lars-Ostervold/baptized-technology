@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import { Source } from '@/lib/chatbot/types';
 import { cn } from '@/lib/utils';
 
@@ -205,7 +204,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
             if (currentParagraphParts.length > 0) {
               paragraphs.push(
                 <p key={`p-${index}-${lineIndex}`} className="leading-relaxed">
-                  {currentParagraphParts.map((part, i) => {
+                  {currentParagraphParts.map((part) => {
                     if (React.isValidElement(part) && part.type === React.Fragment) {
                       return formatMarkdownText(part.props.children as string);
                     }
@@ -231,7 +230,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
             if (currentParagraphParts.length > 0) {
               paragraphs.push(
                 <p key={`p-${index}-${lineIndex}`} className="leading-relaxed">
-                  {currentParagraphParts.map((part, i) => {
+                  {currentParagraphParts.map((part) => {
                     if (React.isValidElement(part) && part.type === React.Fragment) {
                       return formatMarkdownText(part.props.children as string);
                     }
@@ -265,7 +264,7 @@ export function CitedMessage({ content, sources }: CitedMessageProps) {
   if (currentParagraphParts.length > 0) {
     paragraphs.push(
       <p key="last-paragraph" className="leading-relaxed">
-        {currentParagraphParts.map((part, i) => {
+        {currentParagraphParts.map((part) => {
           if (React.isValidElement(part) && part.type === React.Fragment) {
             return formatMarkdownText(part.props.children as string);
           }

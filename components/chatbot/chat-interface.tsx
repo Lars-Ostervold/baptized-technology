@@ -45,7 +45,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [showExpandButton, setShowExpandButton] = useState(true)
   const [refreshChatTrigger, setRefreshChatTrigger] = useState(0)
   const [isLoadingChat, setIsLoadingChat] = useState(false)
-  const [isExampleSubmission, setIsExampleSubmission] = useState(false)
 
   // Chat history state and caching
   const [chatHistory, setChatHistory] = useState<any[]>([])
@@ -152,7 +151,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     if (hasChanges) {
       setMessagesWithSources(updatedMessages as ExtendedMessage[]);
     }
-  }, [originalMessages, currentMessageSources]);
+  }, [originalMessages, currentMessageSources]); //eslint-disable-line react-hooks/exhaustive-deps
 
   const [previousStatus, setPreviousStatus] = useState(status)
 
@@ -182,7 +181,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     
     // Update previous status for next comparison
     setPreviousStatus(status)
-  }, [status])
+  }, [status]) //eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChatSelected = async (chatId: string) => {
     setIsLoadingChat(true)
@@ -236,8 +235,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     // Don't do anything if already loading
     if (isLoading) return
     
-    // Set flag that this is an example submission
-    setIsExampleSubmission(true)
     
     // Update the input state with the example text
     handleInputChange({ target: { value: example } } as React.ChangeEvent<HTMLInputElement>)
@@ -252,18 +249,12 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         formElement.dispatchEvent(submitEvent)
       }
       
-      // Reset the example submission flag
-      setTimeout(() => {
-        setIsExampleSubmission(false)
-      }, 100)
+
     }, 50) // Small delay to ensure input state is updated
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Get the text to submit from input
-    const textToSubmit = input.trim()
     
     // Don't do anything if no input or already loading
     if (!input.trim() || isLoading) return
@@ -324,7 +315,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         body: JSON.stringify({ text: input })
       })
       
-      const { isRelevant, status: relevanceStatus } = await relevanceResponse.json()
+      const { isRelevant } = await relevanceResponse.json()
       
       if (!isRelevant) {
         // If query is off-topic, proceed with regular chat
@@ -364,7 +355,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         })
       })
       
-      const { sources: rerankedSources, contextText, status: summarizeStatus } = await summarizeResponse.json()
+      const { sources: rerankedSources, contextText } = await summarizeResponse.json()
       
       // Store sources for the upcoming message
       setCurrentMessageSources(rerankedSources || [])

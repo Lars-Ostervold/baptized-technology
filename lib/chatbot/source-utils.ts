@@ -23,6 +23,7 @@ export async function isQueryRelevant(query: string, chatbotId: string): Promise
   return text.trim().toLowerCase() === "true"
 }
 
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateContextualQuery(currentQuery: string, chatHistory: any[]): Promise<string> {
   // If there's no chat history, just use the current query
   if (!chatHistory || chatHistory.length === 0) {
@@ -36,6 +37,7 @@ export async function generateContextualQuery(currentQuery: string, chatHistory:
         role: "system",
         content: "You are a query enhancement assistant. Your job is to rewrite the user's latest query to include important context from the conversation history. Don't summarize the entire conversation - just enhance the latest query to make it more specific based on the conversation context. Return only the enhanced query text with no additional explanation."
       },
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...chatHistory.slice(-6).map((msg: any) => ({ 
         role: msg.role as "user" | "assistant", 
         content: msg.content 

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { getChatbotConfig } from '@/lib/chatbot/config'
 import { isQueryRelevant } from '@/lib/chatbot/source-utils'
 
 export const runtime = "edge"

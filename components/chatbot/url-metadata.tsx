@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { 
   Book, 
   Podcast, 
@@ -9,8 +10,7 @@ import {
   ScrollText,
   MessageSquare, 
   Globe, 
-  Mic, 
-  Newspaper
+  Mic 
 } from 'lucide-react';
 
 interface UrlMetadataProps {
@@ -19,6 +19,7 @@ interface UrlMetadataProps {
   className?: string;
 }
 
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function UrlMetadata({ url, type, className }: UrlMetadataProps) {
   const [favicon, setFavicon] = useState<string | null>(null);
   const [ogImage, setOgImage] = useState<string | null>(null);
@@ -97,26 +98,32 @@ export function UrlMetadata({ url, type, className }: UrlMetadataProps) {
 
   if (ogImage) {
     return (
-      <img 
-        src={ogImage} 
-        alt=""
-        className="h-10 w-10 object-cover rounded-lg"
-        onError={() => {
-          setOgImage(null);
-          if (!favicon) setHasError(true);
-        }}
-      />
+      <div className="relative h-10 w-10">
+        <Image
+          src={ogImage}
+          alt=""
+          fill
+          className="object-cover rounded-lg"
+          onError={() => {
+            setOgImage(null);
+            if (!favicon) setHasError(true);
+          }}
+        />
+      </div>
     );
   }
 
   if (favicon) {
     return (
-      <img 
-        src={favicon} 
-        alt=""
-        className="h-10 w-10 object-contain p-1.5"
-        onError={() => setHasError(true)}
-      />
+      <div className="relative h-10 w-10">
+        <Image
+          src={favicon}
+          alt=""
+          fill
+          className="object-contain p-1.5"
+          onError={() => setHasError(true)}
+        />
+      </div>
     );
   }
 

@@ -66,7 +66,7 @@ export function ChatInput({
   useEffect(() => {
     // Make the form reference available to window for programmatic submission
     if (formRef.current) {
-      (window as any).__chatFormElement = formRef.current
+      (window as any).__chatFormElement = formRef.current //eslint-disable-line @typescript-eslint/no-explicit-any
     }
     
     return () => {
@@ -85,7 +85,7 @@ export function ChatInput({
         clearInput()
       }
     }
-  }, [status, input])
+  }, [status, input]) //eslint-disable-line react-hooks/exhaustive-deps
   
   // Focus input on mount and when status changes to ready
   useEffect(() => {
