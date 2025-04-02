@@ -110,13 +110,25 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   })
   
   // Use a state to track messages with sources
-  const [messagesWithSources, setMessagesWithSources] = useState<ExtendedMessage[]>([]);
+  const [messagesWithSources, setMessagesWithSources] = useState<ExtendedMessage[]>([
+    { id: nanoid(), role: "system", content: config.systemPrompt }
+  ]);
   
   // Keep messagesWithSources in sync with messages
   useEffect(() => {
-    // Prevent infinite loop when only system message exists
-    if (originalMessages.length === 1 && originalMessages[0].role === 'system' && messagesWithSources.length <= 1) {
+    // Don't sync if both arrays only contain a system message
+    if (originalMessages.length === 1 && originalMessages[0].role === 'system' && 
+        messagesWithSources.length === 1 && messagesWithSources[0].role === 'system') {
       return;
+    }
+
+    // Check if we need to initialize messagesWithSources with the system message
+    if (messagesWithSources.length === 0 && originalMessages.length > 0) {
+      const systemMessage = originalMessages.find(msg => msg.role === 'system');
+      if (systemMessage) {
+        setMessagesWithSources([systemMessage as ExtendedMessage]);
+        return;
+      }
     }
 
     const updatedMessages = originalMessages.map(msg => {
@@ -297,7 +309,23 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         content: input,
         parts: [{ type: 'text', text: input }]
       }
-      setMessagesWithSources([...messagesWithSources, userMessage])
+      
+      // Make sure we have a system message before adding the user message
+      const existingSystemMessage = messagesWithSources.find(msg => msg.role === 'system')
+      const updatedMessages = [...messagesWithSources]
+      
+      if (!existingSystemMessage) {
+        // Add a system message if none exists
+        updatedMessages.unshift({ 
+          id: nanoid(), 
+          role: "system" as const, 
+          content: config.systemPrompt 
+        })
+      }
+      
+      // Now add the user message
+      updatedMessages.push(userMessage)
+      setMessagesWithSources(updatedMessages)
 
       // Create a cleaned chat history for context
       const chatHistory = messagesWithSources
@@ -384,9 +412,7 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
       setCurrentMessageSources(rerankedSources || [])
       
       // Create augmented user message with context if available
-      const augmentedMessages = [...messagesWithSources]
-      
-      augmentedMessages.push(userMessage)
+      const augmentedMessages = [...updatedMessages] // Use the already updated messages
 
       // If we have context, add it to the system message
       if (contextText) {
