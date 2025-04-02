@@ -83,9 +83,8 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
-          Technology is advancing at an unprecedented pace. But innovation without purpose is empty. 
-          At Baptized Technology, we refine AI and digital tools to serve the Kingdom—guiding hearts 
-          into deeper faith and discipleship.
+          Revival is coming. Information is the catalyst. <br/>
+          We build AI tools to put the best Christian minds in your pocket. Because when people experience the beauty of Jesus' story, they are compelled to live it out.
         </motion.p>
       </motion.div>
       <motion.div 
