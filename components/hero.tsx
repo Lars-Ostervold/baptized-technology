@@ -84,7 +84,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
           Revival is coming. Information is the catalyst. <br/>
-          We build AI tools to put the best Christian minds in your pocket. Because when people experience the beauty of Jesus' story, they are compelled to live it out.
+          We build AI tools to put the best Christian minds in your pocket. Because when people experience the beauty of Jesus&apos; story, they are compelled to live it out.
         </motion.p>
       </motion.div>
       <motion.div 
