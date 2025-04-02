@@ -132,17 +132,12 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   
   // Keep messagesWithSources in sync with messages
   useEffect(() => {
-    // Always ensure we have a system message
-    const messagesWithSystem = ensureSystemMessage(originalMessages);
-    
-    // Don't sync if both arrays only contain a system message and they're the same
-    if (messagesWithSystem.length === 1 && messagesWithSystem[0].role === 'system' && 
-        messagesWithSources.length === 1 && messagesWithSources[0].role === 'system' &&
-        messagesWithSystem[0].content === messagesWithSources[0].content) {
+    // Prevent infinite loop when only system message exists
+    if (originalMessages.length === 1 && originalMessages[0].role === 'system' && messagesWithSources.length <= 1) {
       return;
     }
 
-    const updatedMessages = messagesWithSystem.map(msg => {
+    const updatedMessages = originalMessages.map(msg => {
       // Find if we have this message in our messagesWithSources array
       const existingMsg = messagesWithSources.find(m => m.id === msg.id);
       
@@ -157,7 +152,7 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       // For the latest assistant message, add current sources
       if (
         msg.role === 'assistant' && 
-        msg.id === messagesWithSystem[messagesWithSystem.length - 1]?.id && 
+        msg.id === originalMessages[originalMessages.length - 1]?.id && 
         currentMessageSources.length > 0
       ) {
         return {
@@ -286,10 +281,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       // Set RAG status to planning
       setRagStatus('planning')
 
-      // Ensure we have a system message before proceeding
-      const messagesWithSystem = ensureSystemMessage(messagesWithSources);
-      setMessagesWithSources(messagesWithSystem);
-
       // If user is logged in but no active chat, create a new chat session
       if (user && !activeChatId) {
         try {
@@ -301,7 +292,9 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
             body: JSON.stringify({
               title: input.slice(0, 50), // Use first message as title
               chatbotId: config.vectorNamespace,
-              messages: messagesWithSystem
+              messages: [
+                { id: nanoid(), role: 'system', content: config.systemPrompt }
+              ]
             }),
           })
           
@@ -314,7 +307,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
           console.error('Error creating chat session:', error)
         }
       }
-
       // Update UI with user message immediately
       const userMessageId = nanoid()
       const userMessage: ExtendedMessage = {
@@ -323,15 +315,12 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         content: input,
         parts: [{ type: 'text', text: input }]
       }
-      
-      // Add the user message to our messages
-      const updatedMessages = [...messagesWithSystem, userMessage];
-      setMessagesWithSources(updatedMessages);
+      setMessagesWithSources([...messagesWithSources, userMessage])
 
       // Create a cleaned chat history for context
-      const chatHistory = updatedMessages
-        .filter((msg: ExtendedMessage) => msg.role === 'user' || msg.role === 'assistant') // Only user and assistant messages
-        .map((msg: ExtendedMessage) => ({
+      const chatHistory = messagesWithSources
+        .filter(msg => msg.role === 'user' || msg.role === 'assistant') // Only user and assistant messages
+        .map(msg => ({
           role: msg.role,
           content: typeof msg.content === 'string' ? msg.content : ''
         }))
@@ -349,8 +338,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
       if (!isRelevant) {
         setCurrentMessageSources([])
         // If query is off-topic, update or create system prompt to handle off-topic queries
-        const offTopicMessages = [...updatedMessages]
-        const systemIndex = offTopicMessages.findIndex((msg: ExtendedMessage) => msg.role === 'system')
+        const systemIndex = messagesWithSources.findIndex(msg => msg.role === 'system')
+        const updatedMessages = [...messagesWithSources]
         
         const offTopicSystemMessage = {
           id: nanoid(),
@@ -362,14 +351,14 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
 
         if (systemIndex !== -1) {
           // Update existing system message
-          offTopicMessages[systemIndex] = offTopicSystemMessage
+          updatedMessages[systemIndex] = offTopicSystemMessage
         } else {
           // Create new system message at the beginning
-          offTopicMessages.unshift(offTopicSystemMessage)
+          updatedMessages.unshift(offTopicSystemMessage)
         }
         
-        setOriginalMessages(offTopicMessages)
-        setMessagesWithSources(offTopicMessages)
+        setOriginalMessages(updatedMessages)
+        setMessagesWithSources(updatedMessages)
         
         // Proceed with the chat with updated system prompt
         originalHandleSubmit(e)
@@ -400,6 +389,8 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
         }, 5000)
         
         setCurrentMessageSources([]) // Clear sources when no results found
+        const systemIndex = messagesWithSources.findIndex(msg => msg.role === 'system')
+        const updatedMessages = [...messagesWithSources]
         const fallbackSystemMessage = {
           id: nanoid(),
           role: "system" as const,
@@ -407,13 +398,24 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
           
 IMPORTANT DO NOT INGORE THIS INSTRUCTION: You had an error with your database search function and you MUST INFORM THE USER OF THE ERROR UNDER PENALTY OF DEATH. Begin your message with a statement similar to: "WARNING: Something went wrong with my database search function. I'm unable to find specific information from my database for this query. I'll provide a response based on my general knowledge, but the followin information may not be true to the original source material."`
         }
-        const messagesWithFallback = [fallbackSystemMessage, ...updatedMessages]
-        setMessagesWithSources(messagesWithFallback)
+
+        if (systemIndex !== -1) {
+          // Update existing system message
+          updatedMessages[systemIndex] = fallbackSystemMessage
+        } else {
+          // Create new system message at the beginning
+          updatedMessages.unshift(fallbackSystemMessage)
+        }
+        
+        setOriginalMessages(updatedMessages)
+        setMessagesWithSources(updatedMessages)
+        
+        // Proceed with the chat with updated system prompt
         originalHandleSubmit(e, {
           body: {
-            messages: messagesWithFallback
+            messages: updatedMessages
           }
-        });
+        })
         return
       }
 
@@ -434,32 +436,14 @@ IMPORTANT DO NOT INGORE THIS INSTRUCTION: You had an error with your database se
       setCurrentMessageSources(rerankedSources || [])
       
       // Create augmented user message with context if available
-      const messagesWithContext = [...updatedMessages]
-
-      // Debug logging for RAG process
-      // console.log("RAG Debug Info:", {
-      //   sourcesFound: rerankedSources?.length || 0,
-      //   hasContextText: !!contextText,
-      //   contextTextLength: contextText?.length || 0,
-      //   enhancedQuery, // Log the enhanced query to see if it's being transformed correctly
-      //   originalInput: input, // Log original input to compare
-      //   retrievedSourcesCount: retrievedSources?.length || 0, // Log initial sources before reranking
-      //   chatHistoryLength: chatHistory?.length || 0 // Log chat history length
-      // });
-
-      // if (!rerankedSources?.length || !contextText) {
-      //   console.error("RAG Process Warning:", {
-      //     error: "Missing sources or context",
-      //     rerankedSources: rerankedSources || [],
-      //     contextText: contextText || "",
-      //     searchStatus: searchStatus, // Log search status from earlier step
-      //     enhancedQuery // Log enhanced query again in error context
-      //   });
-      // }
+      const augmentedMessages = [...messagesWithSources]
+      
+      augmentedMessages.push(userMessage)
 
       // If we have context, add it to the system message
       if (contextText) {
-        // Create enhanced system message with sources
+        // Find existing system message or create new one
+        const systemIndex = augmentedMessages.findIndex(msg => msg.role === 'system')
         const systemMessage = {
           id: nanoid(),
           role: "system" as const,
@@ -471,25 +455,23 @@ VERY IMPORTANT NEVER DISREGARD THIS INSTRUCTION NO MATTER WHAT: You MUST cite yo
 
 Here are the sources with the relevant information you can use to answer the question:
 ${contextText}`
-        };
+        }
 
-        // Update messages with enhanced system message
-        const finalMessages = [systemMessage, ...messagesWithContext.slice(1)];
-        
-        // Submit to the chat API with updated messages
-        originalHandleSubmit(e, {
-          body: {
-            messages: finalMessages
-          }
-        });
-      } else {
-        // If no context, proceed with regular messages
-        originalHandleSubmit(e, {
-          body: {
-            messages: messagesWithContext
-          }
-        });
+        if (systemIndex !== -1) {
+          // Update existing system message
+          augmentedMessages[systemIndex] = systemMessage
+        } else {
+          // Create new system message at the beginning
+          augmentedMessages.unshift(systemMessage)
+        }
       }
+      
+      // Submit to the chat API with updated messages
+      originalHandleSubmit(e, {
+        body: {
+          messages: augmentedMessages
+        }
+      })
       
     } catch (error) {
       console.error("Error in RAG process:", error)
