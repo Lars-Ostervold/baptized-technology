@@ -1,10 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Loader2, Search, Brain, Sparkles } from 'lucide-react'
+import { Loader2, Search, Brain, Sparkles, CircleAlert } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing'
+type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing' | 'search_failed'
 
 interface RagStatusIndicatorProps {
   status: RagStatus
@@ -60,6 +60,17 @@ const statusConfig = {
     animation: {
       icon: { rotate: 360 },
       transition: { duration: 1.5, repeat: Infinity, ease: "linear" }
+    }
+  },
+  search_failed: {
+    icon: CircleAlert,
+    text: 'The database search function experienced an error.',
+    color: 'text-red-500',
+    bgColor: 'bg-red-500/10',
+    borderColor: 'border-red-500/20',
+    animation: {
+      icon: { scale: [1, 1.2, 1], opacity: [1, 0.8, 1] },
+      transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
     }
   },
 }

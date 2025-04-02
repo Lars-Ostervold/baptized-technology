@@ -14,7 +14,7 @@ import { EnhancedWelcome } from '@/components/chatbot/enhanced-welcome'
 
 // Define the status type
 type ChatStatus = 'idle' | 'streaming' | 'submitted' | 'waiting' | 'error' | 'ready'
-type RagStatus = 'planning' | 'searching' | 'summarizing' | 'idle'
+type RagStatus = 'planning' | 'searching' | 'summarizing' | 'idle' | 'search_failed'
 // Define props interface
 interface ChatMessagesProps {
   messages: ExtendedMessage[]
