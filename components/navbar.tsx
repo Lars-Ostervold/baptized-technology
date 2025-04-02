@@ -49,7 +49,7 @@ export default function Navbar() {
           <div className="hidden sm:block">
             <Link href="/chatbots">
               <Button size="default" className="justify-start">
-                Try the AI
+                Explore the AI
               </Button>
             </Link>
           </div>
@@ -64,6 +64,11 @@ export default function Navbar() {
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col space-y-4 pt-8">
+                <Link href="/chatbots" className="inline-flex items-center" onClick={() => setIsOpen(false)}>
+                  <Button size="default" className="justify-start w-full">
+                    Explore the AI
+                  </Button>
+                </Link>
                 <Link href="/vision" className="text-lg font-medium transition-colors hover:text-primary" onClick={() => setIsOpen(false)}>
                   Vision
                 </Link>
@@ -96,11 +101,6 @@ export default function Navbar() {
                       <span>Contact</span>
                     </div>
                   </ContactDialog>
-                  <Link href="/chatbots" className="inline-flex items-center" onClick={() => setIsOpen(false)}>
-                    <Button size="default" className="justify-start w-full">
-                      Try the AI
-                    </Button>
-                  </Link>
                 </div>
               </div>
             </SheetContent>

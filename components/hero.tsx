@@ -94,13 +94,13 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
       >
-        <Link href="/vision">
+        <Link href="/chatbots">
           <Button 
             size="lg"
             className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-primary to-primary/80 px-8 py-6 text-lg font-medium transition-all hover:scale-105 hover:shadow-lg"
           >
             <span className="relative z-10 flex items-center">
-              Explore the Vision
+              Explore the AI
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </span>
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/20 to-primary/10 opacity-0 transition-opacity group-hover:opacity-100" />
