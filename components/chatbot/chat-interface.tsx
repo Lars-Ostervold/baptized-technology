@@ -90,8 +90,9 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   }
 
   // RAG status
-  type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing'
+  type RagStatus = 'idle' | 'planning' | 'searching' | 'summarizing' | 'search_failed'
   const [ragStatus, setRagStatus] = useState<RagStatus>('idle')
+  const [showSearchError, setShowSearchError] = useState(false)
 
   const {
     messages: originalMessages,
@@ -389,9 +390,30 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
       const { sources: retrievedSources, enhancedQuery, status: searchStatus } = await searchResponse.json()
       
       if (searchStatus === 'no_results') {
-        // If no sources found, proceed with regular chat
+        // console.log("No results found, so we're setting the RAG status to search_failed")
+        setRagStatus('search_failed')
+        setShowSearchError(true)
+        // Set a timeout to hide the error after 5 seconds
+        setTimeout(() => {
+          setShowSearchError(false)
+          setRagStatus('idle')
+        }, 5000)
+        
         setCurrentMessageSources([]) // Clear sources when no results found
-        originalHandleSubmit(e)
+        const fallbackSystemMessage = {
+          id: nanoid(),
+          role: "system" as const,
+          content: `${config.systemPrompt}
+          
+IMPORTANT DO NOT INGORE THIS INSTRUCTION: You had an error with your database search function and you MUST INFORM THE USER OF THE ERROR UNDER PENALTY OF DEATH. Begin your message with a statement similar to: "WARNING: Something went wrong with my database search function. I'm unable to find specific information from my database for this query. I'll provide a response based on my general knowledge, but the followin information may not be true to the original source material."`
+        }
+        const messagesWithFallback = [fallbackSystemMessage, ...updatedMessages]
+        setMessagesWithSources(messagesWithFallback)
+        originalHandleSubmit(e, {
+          body: {
+            messages: messagesWithFallback
+          }
+        });
         return
       }
 
@@ -413,6 +435,27 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
       
       // Create augmented user message with context if available
       const messagesWithContext = [...updatedMessages]
+
+      // Debug logging for RAG process
+      // console.log("RAG Debug Info:", {
+      //   sourcesFound: rerankedSources?.length || 0,
+      //   hasContextText: !!contextText,
+      //   contextTextLength: contextText?.length || 0,
+      //   enhancedQuery, // Log the enhanced query to see if it's being transformed correctly
+      //   originalInput: input, // Log original input to compare
+      //   retrievedSourcesCount: retrievedSources?.length || 0, // Log initial sources before reranking
+      //   chatHistoryLength: chatHistory?.length || 0 // Log chat history length
+      // });
+
+      // if (!rerankedSources?.length || !contextText) {
+      //   console.error("RAG Process Warning:", {
+      //     error: "Missing sources or context",
+      //     rerankedSources: rerankedSources || [],
+      //     contextText: contextText || "",
+      //     searchStatus: searchStatus, // Log search status from earlier step
+      //     enhancedQuery // Log enhanced query again in error context
+      //   });
+      // }
 
       // If we have context, add it to the system message
       if (contextText) {
@@ -559,6 +602,9 @@ ${contextText}`
             )}
             {ragStatus === 'summarizing' && (
               <RagStatusIndicator status="summarizing" />
+            )}
+            {showSearchError && (
+              <RagStatusIndicator status="search_failed" />
             )}
             {status === 'error' && (
               <span className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-full backdrop-blur-sm">

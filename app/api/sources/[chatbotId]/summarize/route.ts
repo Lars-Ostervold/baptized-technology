@@ -29,7 +29,11 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     const contextText = sourcesForContext.length > 0
       ? sourcesForContext.map((source: Source, i: number) => `Source ${i + 1}: ${source.content}`).join("\n\n")
       : ""
-    
+
+    // console.log("The summarization route finished running and will return the following sources and contextText:")
+    // console.log(formattedSources)
+    // console.log(contextText)
+
     return NextResponse.json({
       sources: formattedSources,
       contextText,

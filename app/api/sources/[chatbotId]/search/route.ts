@@ -8,6 +8,63 @@ import { generateContextualQuery, expandQuery } from '@/lib/chatbot/source-utils
 
 export const runtime = "edge"
 
+// Helper function to delay execution
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+// Helper function to check if error is a timeout
+const isTimeoutError = (error: any) => {
+  return error?.code === '57014' || 
+         error?.message?.includes('canceling statement due to statement timeout') ||
+         error?.message?.includes('timeout')
+}
+
+// Helper function to perform vector search with retries
+async function performVectorSearch(
+  supabase: any,
+  embedding: number[],
+  config: any,
+  maxRetries = 3,
+  initialDelay = 1000
+): Promise<{ data: Source[] | null; error: any | null }> {
+  let lastError = null
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await supabase.rpc('match_documents', {
+        query_embedding: embedding,
+        match_threshold: 0.5,
+        match_count: 20,
+        vector_namespace: config.vectorNamespace
+      })
+      
+      if (result.error) {
+        throw result.error
+      }
+      
+      return result
+    } catch (error: any) {
+      lastError = error
+      
+      // If it's not a timeout error, don't retry
+      if (!isTimeoutError(error)) {
+        return { data: null, error }
+      }
+      
+      // If this was the last attempt, return the error
+      if (attempt === maxRetries - 1) {
+        return { data: null, error }
+      }
+      
+      // Calculate exponential backoff delay
+      const backoffDelay = initialDelay * Math.pow(2, attempt)
+      console.log(`Attempt ${attempt + 1} failed, retrying in ${backoffDelay}ms...`)
+      await delay(backoffDelay)
+    }
+  }
+  
+  return { data: null, error: lastError }
+}
+
 export async function POST(req: Request, { params }: { params: { chatbotId: string } }) {
   try {
     const { text, chatHistory = [] } = await req.json()
@@ -24,6 +81,13 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     
     // Generate a contextual query using the chat history
     const queryText = await generateContextualQuery(text, chatHistory)
+
+    return NextResponse.json({
+      sources: [],
+      contextText: "",
+      enhancedQuery: queryText,
+      status: 'no_results'
+    })
     
     // Expand the query with synonyms and related terms
     const expandedQueries = await expandQuery(queryText)
@@ -38,18 +102,24 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     
     // Perform initial retrieval with multiple queries (first stage)
     const retrievalPromises = embeddings.map(({ embedding }) => 
-      supabase.rpc('match_documents', {
-        query_embedding: embedding,
-        match_threshold: 0.5,
-        match_count: 20,
-        vector_namespace: config.vectorNamespace
-      })
+      performVectorSearch(supabase, embedding, config)
     )
     
     const retrievalResults = await Promise.all(retrievalPromises)
     
+    // Check if all retrievals failed
+    const allFailed = retrievalResults.every(result => result.error)
+    if (allFailed) {
+      console.error("All vector searches failed:", retrievalResults.map(r => r.error))
+      return NextResponse.json({
+        sources: [],
+        contextText: "",
+        enhancedQuery: queryText,
+        status: 'no_results'
+      })
+    }
+    
     // Combine and deduplicate results from all queries
-    //eslint-disable-next-line prefer-const
     let combinedSources: Source[] = []
     const seenIds = new Set()
     
