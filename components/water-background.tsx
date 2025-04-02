@@ -1,107 +1,192 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
-import React, { useRef, useEffect } from 'react'
-import * as THREE from 'three'
 
-const WaterBackground = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null)
+import { useRef, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useTheme } from 'next-themes'
 
-  useEffect(() => {
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    const renderer = new THREE.WebGLRenderer()
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    if (containerRef.current) {
-      containerRef.current.appendChild(renderer.domElement)
-    }
-
-    const geometry = new THREE.PlaneGeometry(2, 2)
-
-    const uniforms = {
-      u_time: { value: 1.0 },
-      u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      u_mouse: { value: new THREE.Vector2() },
-    }
-
-    const material = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: `
-        void main() {
-          gl_Position = vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float u_time;
-        uniform vec2 u_resolution;
-        uniform vec2 u_mouse;
-
-        void main() {
-          vec2 st = gl_FragCoord.xy / u_resolution.xy;
-          st.x *= u_resolution.x / u_resolution.y;
-
-          vec3 color = vec3(0.0);
-          
-          // Dark blue base color
-          color = vec3(0.098, 0.153, 0.204);
-
-          // Water ripple effect
-          float t = u_time * 0.1;
-          vec2 uv = st * 10.0; 
-          
-          for(float i = 1.0; i < 3.0; i++){
-            uv.y += i * 0.15 * sin(uv.x * i * 0.5 + t * i);
-            uv.x += i * 0.15 * cos(uv.y * i * 0.5 + t * i);
-          }
-
-          float r = abs(sin(uv.x - uv.y));
-          
-          // Add subtle blue highlights
-          color += vec3(0.0, 0.10, 0.15) * r;
-
-          gl_FragColor = vec4(color, 1.0);
-        }
-      `,
-    })
-
-    const mesh = new THREE.Mesh(geometry, material)
-    scene.add(mesh)
-
-    camera.position.z = 1
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      uniforms.u_resolution.value.x = window.innerWidth
-      uniforms.u_resolution.value.y = window.innerHeight
-    }
-
-    function onMouseMove(event: { clientX: number; clientY: number }) {
-      uniforms.u_mouse.value.x = event.clientX
-      uniforms.u_mouse.value.y = window.innerHeight - event.clientY
-    }
-
-    window.addEventListener("resize", onWindowResize)
-    window.addEventListener("mousemove", onMouseMove)
-
-    onWindowResize()
-
-    function animate() {
-      requestAnimationFrame(animate)
-      uniforms.u_time.value += 0.05
-      renderer.render(scene, camera)
-    }
-
-    animate()
-
-    return () => {
-      window.removeEventListener("resize", onWindowResize)
-      window.removeEventListener("mousemove", onMouseMove)
-      containerRef.current?.removeChild(renderer.domElement)
-    }
-  }, [])
-
-  return <div ref={containerRef} className="fixed inset-0 z-[-1]" />
+interface Particle {
+  id: number
+  x: number
+  y: number
+  size: number
+  color: string
+  vx: number
+  vy: number
+  opacity: number
+  glow: number
 }
 
-export default WaterBackground
+export default function WaterBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const particlesRef = useRef<Particle[]>([])
+  const animationFrameRef = useRef<number>(0)
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+
+  // Create particles with glow effect
+  const createParticles = (width: number, height: number) => {
+    const particles: Particle[] = []
+    const particleCount = Math.floor((width * height) / 10000)
+    const baseColor = isDark ? '130, 150, 255' : '70, 100, 230'
+    
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        id: i,
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 3 + 1,
+        color: `rgba(${baseColor}, ${Math.random() * 0.5 + 0.2})`,
+        vx: Math.random() * 0.5 - 0.25,
+        vy: Math.random() * 0.5 - 0.25,
+        opacity: Math.random() * 0.5 + 0.3,
+        glow: Math.random() * 0.5 + 0.5
+      })
+    }
+    
+    return particles
+  }
+
+  // Update dimensions
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect()
+        setDimensions({ width, height })
+        particlesRef.current = createParticles(width, height)
+      }
+    }
+
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    
+    return () => {
+      window.removeEventListener('resize', updateDimensions)
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+  }, [isDark])
+
+  // Mouse movement
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        setMousePosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        })
+      }
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  // Animation loop
+  useEffect(() => {
+    if (!canvasRef.current || dimensions.width === 0) return
+
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = dimensions.width
+    canvas.height = dimensions.height
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      
+      // Draw connection lines between nearby particles
+      ctx.strokeStyle = isDark ? 'rgba(130, 150, 255, 0.05)' : 'rgba(70, 100, 230, 0.05)'
+      ctx.lineWidth = 0.5
+
+      for (let i = 0; i < particlesRef.current.length; i++) {
+        const p1 = particlesRef.current[i]
+        
+        // Mouse influence - particles gently move away from cursor
+        const dx = mousePosition.x - p1.x
+        const dy = mousePosition.y - p1.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        const maxDistance = 150
+        
+        if (distance < maxDistance) {
+          const force = (maxDistance - distance) / maxDistance
+          p1.vx -= (dx / distance) * force * 0.02
+          p1.vy -= (dy / distance) * force * 0.02
+        }
+        
+        // Update position
+        p1.x += p1.vx
+        p1.y += p1.vy
+        
+        // Boundary check with bounce
+        if (p1.x < 0 || p1.x > canvas.width) p1.vx *= -1
+        if (p1.y < 0 || p1.y > canvas.height) p1.vy *= -1
+        
+        // Slow down (friction)
+        p1.vx *= 0.99
+        p1.vy *= 0.99
+        
+        // Add slight random movement
+        p1.vx += (Math.random() - 0.5) * 0.02
+        p1.vy += (Math.random() - 0.5) * 0.02
+        
+        // Draw the particle with glow effect
+        ctx.beginPath()
+        ctx.arc(p1.x, p1.y, p1.size, 0, Math.PI * 2)
+        ctx.fillStyle = p1.color
+        ctx.fill()
+        
+        // Add glow effect
+        ctx.beginPath()
+        ctx.arc(p1.x, p1.y, p1.size * 2, 0, Math.PI * 2)
+        ctx.fillStyle = isDark 
+          ? `rgba(130, 150, 255, ${p1.glow * 0.1})` 
+          : `rgba(70, 100, 230, ${p1.glow * 0.1})`
+        ctx.fill()
+        
+        // Connect particles that are close to each other
+        for (let j = i + 1; j < particlesRef.current.length; j++) {
+          const p2 = particlesRef.current[j]
+          const dx = p1.x - p2.x
+          const dy = p1.y - p2.y
+          const distance = Math.sqrt(dx * dx + dy * dy)
+          
+          if (distance < 100) {
+            ctx.beginPath()
+            ctx.moveTo(p1.x, p1.y)
+            ctx.lineTo(p2.x, p2.y)
+            const opacity = (100 - distance) / 100 * 0.2
+            ctx.strokeStyle = isDark 
+              ? `rgba(130, 150, 255, ${opacity})` 
+              : `rgba(70, 100, 230, ${opacity})`
+            ctx.stroke()
+          }
+        }
+      }
+      
+      animationFrameRef.current = requestAnimationFrame(animate)
+    }
+    
+    animate()
+    
+    return () => {
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+  }, [dimensions, mousePosition, isDark])
+
+  return (
+    <div ref={containerRef} className="fixed inset-0 -z-10 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="relative w-full h-full"
+      >
+        <canvas ref={canvasRef} className="absolute inset-0" />
+      </motion.div>
+    </div>
+  )
+}

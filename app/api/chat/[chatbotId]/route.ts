@@ -25,6 +25,14 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
       })
     }
 
+    // // Print the system message for debugging
+    // const systemMessage = processedMessages.find(msg => msg.role === 'system')
+    // if (systemMessage) {
+    //   console.log("System message:", systemMessage)
+    // } else {
+    //   console.log("No system message found")
+    // }
+
 
     // Create a streaming response using AI SDK
     const result = streamText({
