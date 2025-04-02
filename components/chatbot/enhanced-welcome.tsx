@@ -133,7 +133,7 @@ export function EnhancedWelcome({ welcomeMessage, examples, onExampleClick }: En
         {/* Example cards with hover effects */}
         {examples.length > 0 && (
           <motion.div 
-            className="space-y-3 mt-6"
+            className="hidden md:block space-y-3 mt-6"
             variants={itemVariants}
           >
             <motion.p 
