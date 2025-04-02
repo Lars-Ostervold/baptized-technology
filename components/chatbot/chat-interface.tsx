@@ -114,21 +114,6 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
   const [messagesWithSources, setMessagesWithSources] = useState<ExtendedMessage[]>([
     { id: nanoid(), role: "system", content: config.systemPrompt }
   ]);
-
-  // Ensure system message exists and is properly initialized
-  const ensureSystemMessage = (messages: ExtendedMessage[]) => {
-    const systemMessage = {
-      id: nanoid(),
-      role: "system" as const,
-      content: config.systemPrompt
-    };
-    
-    // If no system message exists, add it
-    if (!messages.some(msg => msg.role === 'system')) {
-      return [systemMessage, ...messages];
-    }
-    return messages;
-  };
   
   // Keep messagesWithSources in sync with messages
   useEffect(() => {

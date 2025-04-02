@@ -3,16 +3,23 @@ import { embed } from 'ai'
 import { openai } from '@/lib/openai'
 import { getAdminClient } from '@/lib/supabase'
 import { getChatbotConfig } from '@/lib/chatbot/config'
-import type { Source } from '@/lib/chatbot/types'
+import type { Source, ChatbotConfig } from '@/lib/chatbot/types'
 import { generateContextualQuery, expandQuery } from '@/lib/chatbot/source-utils'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export const runtime = "edge"
 
 // Helper function to delay execution
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
+// Define a type for database errors
+type DatabaseError = {
+  code?: string;
+  message?: string;
+}
+
 // Helper function to check if error is a timeout
-const isTimeoutError = (error: any) => {
+const isTimeoutError = (error: DatabaseError) => {
   return error?.code === '57014' || 
          error?.message?.includes('canceling statement due to statement timeout') ||
          error?.message?.includes('timeout')
@@ -20,13 +27,13 @@ const isTimeoutError = (error: any) => {
 
 // Helper function to perform vector search with retries
 async function performVectorSearch(
-  supabase: any,
+  supabase: SupabaseClient,
   embedding: number[],
-  config: any,
+  config: ChatbotConfig,
   maxRetries = 3,
   initialDelay = 1000
-): Promise<{ data: Source[] | null; error: any | null }> {
-  let lastError = null
+): Promise<{ data: Source[] | null; error: DatabaseError | null }> {
+  let lastError: DatabaseError | null = null
   
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -42,17 +49,18 @@ async function performVectorSearch(
       }
       
       return result
-    } catch (error: any) {
-      lastError = error
+    } catch (error: unknown) {
+      const dbError = error as DatabaseError
+      lastError = dbError
       
       // If it's not a timeout error, don't retry
-      if (!isTimeoutError(error)) {
-        return { data: null, error }
+      if (!isTimeoutError(dbError)) {
+        return { data: null, error: dbError }
       }
       
       // If this was the last attempt, return the error
       if (attempt === maxRetries - 1) {
-        return { data: null, error }
+        return { data: null, error: dbError }
       }
       
       // Calculate exponential backoff delay
@@ -113,6 +121,7 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     }
     
     // Combine and deduplicate results from all queries
+    //eslint-disable-next-line prefer-const
     let combinedSources: Source[] = []
     const seenIds = new Set()
     
