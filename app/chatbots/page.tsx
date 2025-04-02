@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Loader2 } from "lucide-react"
+import { Search, Loader2, ChevronDown } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ChatbotCard } from "@/components/chatbot-card"
 import { LoginDialog } from "@/components/auth/login-dialog"
@@ -32,41 +32,44 @@ export default function SolutionsPage() {
   )
 
   return (
-    <div className="container max-w-7xl py-20">
+    <div className="container max-w-7xl py-12 sm:py-20">
       <WaterBackground/>
-      <div className="space-y-2 text-center mb-16">
-        <h1 className="text-4xl font-bold tracking-tight">Smart Tools for Curious Minds & Hungry Hearts</h1>
-        <p className="text-muted-foreground text-lg">
+      <div className="space-y-2 text-center mb-8 sm:mb-16">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Smart Tools for Curious Minds & Hungry Hearts</h1>
+        <p className="text-muted-foreground text-base sm:text-lg">
           The best Christian thinkers, in your pocket—curated, summarized, and ready to explore.
         </p>
       </div>
 
-      {loading ? (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg">
-          <div className="flex justify-center items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <p className="text-sm text-muted-foreground">Checking authentication...</p>
+      {/* Login prompt - hidden on mobile */}
+      <div className="hidden sm:block">
+        {loading ? (
+          <div className="max-w-md mx-auto mb-8 p-4 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg">
+            <div className="flex justify-center items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <p className="text-sm text-muted-foreground">Checking authentication...</p>
+            </div>
           </div>
-        </div>
-      ) : !user ? (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg">
-          <div className="flex flex-col items-center text-center">
-            <p className="text-sm text-muted-foreground mb-3">Want to save your chat history and preferences?</p>
-            <LoginDialog />
+        ) : !user ? (
+          <div className="max-w-md mx-auto mb-8 p-4 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg">
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-muted-foreground mb-3">Want to save your chat history and preferences?</p>
+              <LoginDialog />
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="max-w-md mx-auto mb-8 p-4 bg-emerald-500/10 backdrop-blur-sm rounded-xl border border-emerald-500/20 shadow-lg">
-          <div className="flex flex-col items-center text-center">
-            <p className="text-sm text-muted-foreground">
-              Logged in as {user.email}. Your chat history will be saved.
-            </p>
+        ) : (
+          <div className="max-w-md mx-auto mb-8 p-4 bg-emerald-500/10 backdrop-blur-sm rounded-xl border border-emerald-500/20 shadow-lg">
+            <div className="flex flex-col items-center text-center">
+              <p className="text-sm text-muted-foreground">
+                Logged in as {user.email}. Your chat history will be saved.
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Search Bar */}
-      <div className="relative max-w-md mx-auto mb-12">
+      <div className="relative max-w-md mx-auto mb-8 sm:mb-12">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5" />
           <Input
@@ -76,6 +79,13 @@ export default function SolutionsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+        </div>
+      </div>
+
+      {/* Mobile scroll indicator */}
+      <div className="sm:hidden flex justify-center mb-8">
+        <div className="animate-bounce rounded-full bg-background/80 backdrop-blur-sm p-2 shadow-xl">
+          <ChevronDown className="h-6 w-6 text-primary" />
         </div>
       </div>
 
