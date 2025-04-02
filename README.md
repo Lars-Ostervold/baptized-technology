@@ -1,4 +1,4 @@
-AI generated readme for now while I'm still refining the alpha
+AI generated readme for now while I'm still refining the alpha 🙂
 
 # Baptized Technology
 
