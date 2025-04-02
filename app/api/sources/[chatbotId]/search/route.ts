@@ -81,13 +81,6 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     
     // Generate a contextual query using the chat history
     const queryText = await generateContextualQuery(text, chatHistory)
-
-    return NextResponse.json({
-      sources: [],
-      contextText: "",
-      enhancedQuery: queryText,
-      status: 'no_results'
-    })
     
     // Expand the query with synonyms and related terms
     const expandedQueries = await expandQuery(queryText)
