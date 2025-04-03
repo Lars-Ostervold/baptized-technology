@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Github, Menu, Heart, MessageSquare } from "lucide-react"
+import { Github, Menu, Heart, MessageSquare, ArrowRight } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ContactDialog } from "@/components/contact-dialog"
 import Image from "next/image"
@@ -50,6 +50,7 @@ export default function Navbar() {
             <Link href="/chatbots">
               <Button size="default" className="justify-start">
                 Explore the AI
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </div>

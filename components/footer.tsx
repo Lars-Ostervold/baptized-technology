@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container flex flex-col gap-8 py-8 md:flex-row md:py-12">
         <div className="flex-1 space-y-4">
           <h2 className="font-bold">Baptized Technology</h2>
-          <p className="text-sm text-muted-foreground">Empowering faith through innovative technology.</p>
+          <p className="text-sm text-muted-foreground">Revival is coming. Information is the catalyst.</p>
         </div>
         <div className="grid flex-1 grid-cols-2 gap-12 sm:grid-cols-3">
           <div className="space-y-4">

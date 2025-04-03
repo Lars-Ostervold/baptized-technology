@@ -3,23 +3,23 @@ import { motion } from "framer-motion"
 
 const features = [
   {
-    name: "Conversational Discipleship",
-    description: "Engage with AI-powered chatbots trained in biblical wisdom—whether you're exploring C.S. Lewis' insights, studying Psalms, or deepening your theological understanding.",
+    name: "Conversational Wisdom",
+    description: "Engage with AI-powered chatbots trained on biblical wisdom. Whether you're exploring C.S. Lewis' philosophy or wondering why Melchizedek is mentioned in Hebrews - we've got you covered.",
     icon: MessageCircle,
   },
   {
-    name: "Scripture Study & Exploration",
-    description: "Go beyond reading—interact with Scripture like never before. Get AI-powered summaries, cross-references, and guided reflections on biblical passages.",
+    name: "Scripture Without Barriers",
+    description: "Stop getting stuck. Instantly access cross-references, historical context, and theological insights to illuminate the beauty of God's Word.",
     icon: Bible,
   },
   {
-    name: "AI-Guided Learning",
-    description: "From book summaries to interactive Q&A on Christian classics, our AI tools make deep theological learning more accessible than ever.",
+    name: "Effortless Theology",
+    description: "Whether you're studying a classic Christian work, unpacking complex doctrines, or diving into historical theology, our AI tools surface the most insightful resources for your journey—right when you need them.",
     icon: Cloud,
   },
   {
-    name: "Faith-Driven Innovation",
-    description: "The future of technology should serve the Kingdom. We're building AI-driven tools to empower believers, churches, and ministries for digital discipleship",
+    name: "Technology for the Kingdom",
+    description: "AI shouldn't replace relationships—it should remove friction in discipleship. We build tools that equip believers, churches, and ministries to engage deeper and grow stronger.",
     icon: Heart,
   },
 ]
@@ -51,12 +51,12 @@ export default function Features() {
       >
         <h2 className="relative font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">
           <span className="relative">
-            Transformative Tools for Digital Discipleship
+            Dive into the beauty of Jesus
             <span className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent blur-2xl opacity-50" />
           </span>
         </h2>
         <p className="mt-4 text-muted-foreground sm:text-lg">
-          Discover how Baptized Technology is rethinking AI for faith. Our tools aren&apos;t just digital—they&apos;re discipleship-driven, designed to help believers and seekers engage Scripture, explore theology, and grow in their walk with Christ.        
+          Discipleship flourishes when knowledge is accessible. Baptized Technology is building AI-powered tools that remove barriers between believers and the wisdom of Scripture, theologians, and Christian thought leaders. Our mission is simple: remove the barriers to experiencing the beauty of Jesus so we can be transformed by His love.       
         </p>
       </motion.div>
       <motion.div 

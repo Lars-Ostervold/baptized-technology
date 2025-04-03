@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, BookOpen, Heart, Sparkles, MessageCircle, ChevronDown } from "lucide-react"
 import WaterBackground from "@/components/water-background"
+import { ScrollIndicator } from "@/components/scroll-indicator"
 
 export default function VisionPage() {
   return (
@@ -20,9 +21,7 @@ export default function VisionPage() {
             The more we understand the beauty of Jesus, the more we are compelled to live out His Kingdom. Our tools put the best Christian minds at your fingertips—because revival starts with knowing the Truth.
           </p>
           <div className="flex justify-center pt-6">
-            <div className="animate-bounce rounded-full bg-background/80 backdrop-blur-sm p-2 shadow-xl">
-              <ChevronDown className="h-6 w-6 text-primary" />
-            </div>
+            <ScrollIndicator text="See more" />
           </div>
         </section>
 
