@@ -49,24 +49,18 @@ export default function WaterBackground() {
     return particles
   }
 
-  // Update dimensions
+  // Initialize dimensions and particles once
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const { width, height } = containerRef.current.getBoundingClientRect()
-        setDimensions({ width, height })
-        particlesRef.current = createParticles(width, height)
-      }
+    if (containerRef.current) {
+      const { width, height } = containerRef.current.getBoundingClientRect()
+      setDimensions({ width, height })
+      particlesRef.current = createParticles(width, height)
     }
-
-    updateDimensions()
-    window.addEventListener('resize', updateDimensions)
     
     return () => {
-      window.removeEventListener('resize', updateDimensions)
       cancelAnimationFrame(animationFrameRef.current)
     }
-  }, [isDark]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isDark]) // Only recreate particles if theme changes
 
   // Mouse movement
   useEffect(() => {
@@ -184,6 +178,7 @@ export default function WaterBackground() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         className="relative w-full h-full"
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
       >
         <canvas ref={canvasRef} className="absolute inset-0" />
       </motion.div>
