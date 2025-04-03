@@ -263,15 +263,29 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
               'Send Magic Link'
             )}
           </Button>
+
+          {view === 'login' && (
+            <div className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => setView('signup')}
+                disabled={isLoading}
+              >
+                Create New Account
+              </Button>
+            </div>
+          )}
         </form>
 
         {/* OAuth buttons */}
-        <div className="relative my-4">
+        <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+            <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white dark:bg-gray-900 px-2 text-gray-500 dark:text-gray-400">
+          <div className="relative flex justify-center">
+            <span className="px-2 text-sm text-gray-500 dark:text-gray-400 bg-background">
               Or continue with
             </span>
           </div>
@@ -328,8 +342,9 @@ export function LoginDialog({ trigger, onLoginSuccess }: LoginDialogProps) {
         <div className="mt-4 text-center text-sm">
           {view === 'login' ? (
             <>
-              <Button variant="link" className="px-2 text-sm" onClick={() => setView('signup')}>
-                Don&apos;t have an account? Sign up
+              <p className="text-muted-foreground mb-2">Don&apos;t have an account yet?</p>
+              <Button variant="link" className="px-2 text-sm font-medium" onClick={() => setView('signup')}>
+                Create a new account
               </Button>
               <Button variant="link" className="px-2 text-sm" onClick={() => setView('magic-link')}>
                 Login with magic link
