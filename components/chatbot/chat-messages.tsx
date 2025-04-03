@@ -59,8 +59,11 @@ export function ChatMessages({
   
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    // Only scroll if we're not currently streaming
+    if (status !== 'streaming') {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [messages, status])
 
   // Show the welcome screen only when there are no messages or just a system message
   // and we're not in any loading/streaming state

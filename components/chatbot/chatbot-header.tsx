@@ -37,6 +37,7 @@ export default function ChatbotHeader({ title, iconName, iconColor }: ChatbotHea
     }
   }
 
+
   return (
     <div className="flex items-center justify-between border-b px-4 py-2">
       <div className="flex items-center gap-4">
@@ -84,7 +85,7 @@ export default function ChatbotHeader({ title, iconName, iconColor }: ChatbotHea
           <div className="hidden md:flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-green-500" />
             <span className="text-xs text-slate-600 dark:text-slate-300">
-              {user.email?.split('@')[0]}
+              {user.user_metadata?.full_name || user.email?.split('@')[0]}
             </span>
           </div>
           <Button 
