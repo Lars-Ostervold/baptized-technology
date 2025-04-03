@@ -83,7 +83,8 @@ export default function SolutionsPage() {
       </div>
 
       {/* Mobile scroll indicator */}
-      <div className="sm:hidden flex justify-center mb-8">
+      <div className="sm:hidden flex flex-col items-center gap-2 mb-8">
+        <p className="text-sm text-muted-foreground">Scroll down to see the chatbot lineup</p>
         <div className="animate-bounce rounded-full bg-background/80 backdrop-blur-sm p-2 shadow-xl">
           <ChevronDown className="h-6 w-6 text-primary" />
         </div>
