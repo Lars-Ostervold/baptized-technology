@@ -60,6 +60,7 @@ export default function WaterBackground() {
     return () => {
       cancelAnimationFrame(animationFrameRef.current)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDark]) // Only recreate particles if theme changes
 
   // Mouse movement

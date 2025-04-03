@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowRight, BookOpen, Heart, Sparkles, MessageCircle, ChevronDown } from "lucide-react"
+import { ArrowRight, BookOpen, Heart, Sparkles, MessageCircle } from "lucide-react"
 import WaterBackground from "@/components/water-background"
 import { ScrollIndicator } from "@/components/scroll-indicator"
 
