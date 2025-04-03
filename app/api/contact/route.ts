@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     // Send email using Resend
     const { data, error } = await resend.emails.send({
       from: "Baptized Technology Contact <lars@baptizedtechnology.com>", // You'll need to verify this domain in Resend
-      to: "ostervold.berent@gmail.com",
+      to: "lars@baptizedtechnology.com",
       subject: `New Contact Form Submission from ${name}`,
       text: `
         Name: ${name}
