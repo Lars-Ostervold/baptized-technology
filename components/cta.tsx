@@ -20,7 +20,7 @@ export default function CTA() {
               <span className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent blur-2xl opacity-50" />
             </span>
           </h2>
-          <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+          <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
             Step into the future of faith-driven technology. Explore AI-powered discipleship tools trusted by believers seeking to grow deeper in their walk with Jesus.
           </p>
         </motion.div>
