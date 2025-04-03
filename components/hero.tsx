@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { motion, Variants } from "framer-motion"
+import { ScrollIndicator } from "@/components/scroll-indicator"
 
 const glowVariants: Variants = {
   initial: { opacity: 0.5, scale: 1 },
@@ -31,7 +32,7 @@ const textVariants: Variants = {
 
 export default function Hero() {
   return (
-    <section className="container flex min-h-[calc(100vh-3.5rem)] max-w-screen-2xl flex-col items-center justify-center space-y-8 py-24 text-center md:py-32">
+    <section className="container relative min-h-screen max-w-screen-2xl flex flex-col items-center justify-center space-y-8 py-24 text-center md:py-32">
       <motion.div 
         className="space-y-4"
         initial={{ opacity: 0, y: 20 }}
@@ -106,6 +107,14 @@ export default function Hero() {
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/10 to-transparent blur-xl opacity-50" />
           </Button>
         </Link>
+      </motion.div>
+      <motion.div
+        className="absolute bottom-[calc(3.5rem+2rem)] left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+      >
+        <ScrollIndicator />
       </motion.div>
     </section>
   )
