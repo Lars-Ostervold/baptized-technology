@@ -256,6 +256,8 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
     }, 50) // Small delay to ensure input state is updated
   }
 
+
+//Main chat handling logic
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -329,9 +331,12 @@ export default function ChatInterface({ chatbotId = 'bibleproject' }) {
         const offTopicSystemMessage = {
           id: nanoid(),
           role: "system" as const,
-          content: `${config.systemPrompt}
+          content: `
+          IMPORTANT. DO NOT IGNORE UNDER PENALTY OF DEATH: The latest user query is off-topic. Do not provide an answer. Please politely decline to answer and guide the user back to exploring topics related to your purpose. You can say something like "Hmm I'm not sure that question is related to my database. Perhaps we could [suggest exploration topic related to your expertise] instead?" Additionally, no sources should be cited in this message. AGAIN. YOU MUST NOT ANSWER THE QUERY. YOU MUST NOT CITE SOURCES. YOU MUST NOT PROVIDE AN ANSWER OTHER THAN TO REDIRECT THE USER TO A MORE APPROPRIATE TOPIC.
 
-IMPORTANT: I've detected that this query is off-topic. Please politely decline to answer and guide the user back to exploring topics related to your purpose. You can say something like "Hmm I'm not sure that question is related to my database. Perhaps we could [suggest exploration topic related to your expertise] instead?"`
+          In a typical conversation, your purpose is this. I give you this only to inform you of your purpose. DO NOT COMPLETE THIS PURPOSE FOR THE LATEST USER QUERY.
+          ${config.systemPrompt}
+          `
         }
 
         if (systemIndex !== -1) {
@@ -344,7 +349,7 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
         
         setOriginalMessages(updatedMessages)
         setMessagesWithSources(updatedMessages)
-        
+
         // Proceed with the chat with updated system prompt
         originalHandleSubmit(e)
         return
@@ -364,7 +369,6 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
       const { sources: retrievedSources, enhancedQuery, status: searchStatus } = await searchResponse.json()
       
       if (searchStatus === 'no_results') {
-        // console.log("No results found, so we're setting the RAG status to search_failed")
         setRagStatus('search_failed')
         setShowSearchError(true)
         // Set a timeout to hide the error after 5 seconds
@@ -381,7 +385,7 @@ IMPORTANT: I've detected that this query is off-topic. Please politely decline t
           role: "system" as const,
           content: `${config.systemPrompt}
           
-IMPORTANT DO NOT INGORE THIS INSTRUCTION: You had an error with your database search function and you MUST INFORM THE USER OF THE ERROR UNDER PENALTY OF DEATH. Begin your message with a statement similar to: "WARNING: Something went wrong with my database search function. I'm unable to find specific information from my database for this query. I'll provide a response based on my general knowledge, but the followin information may not be true to the original source material."`
+IMPORTANT DO NOT INGORE THIS INSTRUCTION: You had an error with your database search function and you MUST INFORM THE USER OF THE ERROR UNDER PENALTY OF DEATH. Begin your message with a statement similar to: "WARNING: Something went wrong with my database search function. I'm unable to find specific information from my database for this query. I'll provide a response based on my general knowledge, but the following information may not be true to the original source material."`
         }
 
         if (systemIndex !== -1) {
