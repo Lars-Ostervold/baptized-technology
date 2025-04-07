@@ -4,6 +4,7 @@ import { getChatbotConfig } from "@/lib/chatbot/config"
 import ChatInterface from "@/components/chatbot/chat-interface"
 import ChatbotBackground from "@/components/chatbot-background"
 import ChatbotHeader from "@/components/chatbot/chatbot-header"
+import { SITE_URL, SITE_NAME } from "@/lib/constants"
 
 interface ChatbotPageProps {
   params: {
@@ -14,14 +15,56 @@ interface ChatbotPageProps {
 export const generateMetadata = async ({ params }: ChatbotPageProps): Promise<Metadata> => {
   try {
     const config = getChatbotConfig(params.chatbotId)
+    
+    // Use more descriptive and SEO-optimized titles and descriptions
+    const title = `${config.title} AI | Christian Chatbot | ${SITE_NAME}`
+    const description = `Experience ${config.title} AI - ${config.description} A faith-based artificial intelligence chatbot powered by ${SITE_NAME}.`
+    
+    // Create keywords based on the chatbot type and category
+    const keywords = [
+      `${config.title} AI`,
+      `Christian ${config.title} chatbot`,
+      `Bible AI`,
+      `Christian AI`,
+      `${config.category}`,
+      `AI ${config.category}`,
+      `${config.title} assistant`,
+      `${config.title} helper`,
+      `Christian technology`,
+      `Faith-based AI`,
+      `${config.title} faith AI`,
+      `${config.category} assistant`,
+      `Religious AI`,
+      `Christian chatbot`,
+      `Biblical assistant`,
+      `Baptized Technology`,
+    ].join(',')
+    
     return {
-      title: `${config.title} | Baptized Technology`,
-      description: config.description,
+      title,
+      description,
+      keywords,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/chatbots/${params.chatbotId}`,
+        siteName: SITE_NAME,
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+      },
+      alternates: {
+        canonical: `${SITE_URL}/chatbots/${params.chatbotId}`,
+      }
     }
   } catch {
     return {
-      title: 'Chatbot | Baptized Technology',
-      description: 'AI Tools for Christian Life',
+      title: 'Christian AI Chatbot | Baptized Technology',
+      description: 'Explore our faith-based AI tools designed to help you grow spiritually with Biblical wisdom and guidance.',
     }
   }
 }

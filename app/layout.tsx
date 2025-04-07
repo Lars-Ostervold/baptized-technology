@@ -7,16 +7,13 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 import { Analytics } from "@vercel/analytics/react"
 import { ToastProvider } from "@/components/ui/toast-provider"
 import Script from 'next/script'
+import { metadata as homeMetadata } from "./metadata" 
 
 const inter = Inter({ subsets: ["latin"] })
 
+// Use the enhanced metadata from metadata.ts but keep the rest of the configuration
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: SITE_TITLE,
-  description: SITE_DESCRIPTION,
-  keywords: SITE_KEYWORDS,
-  applicationName: SITE_NAME,
-  manifest: "/favicon/site.webmanifest",
+  ...homeMetadata,
   robots: {
     index: true,
     follow: true,
@@ -31,25 +28,8 @@ export const metadata: Metadata = {
   verification: {
     google: 'm5RB8MFXNFTTLWsEqRTG-id0HCjUsKoWRBmoXyvZw-8',
   },
-  alternates: {
-    canonical: SITE_URL,
-  },
+  manifest: "/favicon/site.webmanifest",
   themeColor: "#000000",
-  openGraph: {
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    url: SITE_URL,
-    images: [SITE_IMAGE],
-    siteName: SITE_NAME,
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Baptized Technology - AI Refined in the Fire of Baptism",
-    description: SITE_DESCRIPTION,
-    images: [SITE_IMAGE],
-  },
   icons: {
     icon: [
       { rel: "icon", url: "/favicon/favicon.ico" },
