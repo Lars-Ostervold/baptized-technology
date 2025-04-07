@@ -69,7 +69,7 @@ export default function SolutionsPage() {
       </div>
 
       {/* Search Bar */}
-      <div className="relative max-w-md mx-auto mb-8 sm:mb-12">
+      {/* <div className="relative max-w-md mx-auto mb-8 sm:mb-12">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
@@ -83,7 +83,7 @@ export default function SolutionsPage() {
         <p className="text-xs text-muted-foreground mt-2 text-center">
           Try searching for topics like "Bible study", "theology", or "apologetics"
         </p>
-      </div>
+      </div> */}
 
       {/* Mobile scroll indicator */}
       <div className="sm:hidden flex flex-col items-center gap-2 mb-8">
