@@ -2,7 +2,6 @@ import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import Script from "next/script"
 import { SITE_URL, SITE_NAME } from "@/lib/constants"
 
 interface ChatbotCardProps {
