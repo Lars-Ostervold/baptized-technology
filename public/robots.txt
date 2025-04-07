@@ -1,3 +1,9 @@
+# *
 User-agent: *
 Allow: /
-Sitemap: https://yourdomain.com/sitemap.xml
+
+# Host
+Host: https://baptizedtechnology.com
+
+# Sitemaps
+Sitemap: https://baptizedtechnology.com/sitemap.xml
