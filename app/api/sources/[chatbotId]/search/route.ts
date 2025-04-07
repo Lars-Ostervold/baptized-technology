@@ -145,7 +145,7 @@ export async function POST(req: Request, { params }: { params: { chatbotId: stri
     const topSourcesForReranking = combinedSources
       .sort((a, b) => (b.similarity || 0) - (a.similarity || 0))
       .slice(0, 20)
-    
+
     if (topSourcesForReranking.length === 0) {
       return NextResponse.json({
         sources: [],
