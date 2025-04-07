@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { Search, Loader2, ChevronDown } from "lucide-react"
-import { Input } from "@/components/ui/input"
+// import { useState } from "react"
+import { Loader2 } from "lucide-react"
+// import { Search } from "lucide-react"
+// import { Input } from "@/components/ui/input"
 import { ChatbotCard } from "@/components/chatbot-card"
 import { LoginDialog } from "@/components/auth/login-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -23,14 +24,16 @@ const chatbots = Object.values(chatbotConfigs).map(config => ({
 
 export default function SolutionsPage() {
   const { user, loading } = useAuth()
-  const [searchQuery, setSearchQuery] = useState("")
+  // const [searchQuery, setSearchQuery] = useState("")
 
-  const filteredChatbots = chatbots.filter(
-    (chatbot) =>
-      chatbot.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chatbot.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chatbot.category.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+  // TODO: Re-implement search functionality when we have more chatbots
+  // const filteredChatbots = chatbots.filter(
+  //   (chatbot) =>
+  //     chatbot.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     chatbot.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     chatbot.category.toLowerCase().includes(searchQuery.toLowerCase()),
+  // )
+  const filteredChatbots = chatbots
 
   return (
     <div className="container max-w-7xl py-12 sm:py-20">
