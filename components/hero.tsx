@@ -5,12 +5,12 @@ import { motion, Variants } from "framer-motion"
 import { ScrollIndicator } from "@/components/scroll-indicator"
 
 const glowVariants: Variants = {
-  initial: { opacity: 0.5, scale: 1 },
+  initial: { opacity: 0.3, scale: 1 },
   animate: {
-    opacity: [0.5, 0.8, 0.5],
-    scale: [1, 1.1, 1],
+    opacity: [0.3, 0.5, 0.3],
+    scale: [1, 1.05, 1],
     transition: {
-      duration: 3,
+      duration: 4,
       repeat: Infinity,
       repeatType: "reverse" as const
     }
@@ -46,7 +46,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
         >
           <motion.div
-            className="absolute inset-0 bg-primary/20 blur-2xl rounded-full"
+            className="absolute inset-0 bg-primary/10 blur-xl rounded-full"
             variants={glowVariants}
             initial="initial"
             animate="animate"
@@ -57,21 +57,21 @@ export default function Hero() {
               variants={textVariants}
             >
               <span className="relative inline-block">
-                <span className="absolute inset-0 bg-gradient-to-r from-primary/30 via-primary/20 to-transparent blur-3xl opacity-70" />
-                <span className="relative bg-gradient-to-br from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+                <span className="absolute inset-0 bg-primary/15 blur-xl opacity-30" />
+                <span className="relative text-foreground">
                   Technology Immersed in the Fire of Baptism
                 </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent blur-2xl opacity-50" />
+                <span className="absolute inset-0 bg-primary/10 blur-lg opacity-25" />
               </span>
             </motion.h1>
             <motion.div
               className="absolute -top-1 -right-1"
               animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.7, 1, 0.7]
+                scale: [1, 1.1, 1],
+                opacity: [0.5, 0.7, 0.5]
               }}
               transition={{
-                duration: 2,
+                duration: 3,
                 repeat: Infinity,
                 repeatType: "reverse" as const
               }}
