@@ -65,7 +65,7 @@ export default function SolutionsPage() {
           <div className="max-w-md mx-auto mb-8 p-4 bg-emerald-500/10 backdrop-blur-sm rounded-xl border border-emerald-500/20 shadow-lg">
             <div className="flex flex-col items-center text-center">
               <p className="text-sm text-muted-foreground">
-                Logged in as {user.email}. Your chat history will be saved.
+                Logged in as {user.user_metadata?.full_name || user.email}. Your chat history will be saved.
               </p>
             </div>
           </div>
