@@ -1,6 +1,13 @@
 import { redirect } from 'next/navigation'
-import { Metadata } from 'next'
+import { Metadata, Viewport } from 'next'
 import { SITE_NAME } from '@/lib/constants'
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
 
 export const metadata: Metadata = {
   title: `Bible AI | Scripture AI Assistant | ${SITE_NAME}`,

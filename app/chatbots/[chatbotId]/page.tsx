@@ -1,4 +1,4 @@
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import { notFound } from "next/navigation"
 import { getChatbotConfig } from "@/lib/chatbot/config"
 import ChatInterface from "@/components/chatbot/chat-interface"
@@ -10,6 +10,13 @@ interface ChatbotPageProps {
   params: {
     chatbotId: string
   }
+}
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export const generateMetadata = async ({ params }: ChatbotPageProps): Promise<Metadata> => {

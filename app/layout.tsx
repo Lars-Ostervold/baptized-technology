@@ -1,6 +1,6 @@
 import "./globals.css"
 import { Inter } from "next/font/google"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import NavbarWrapper from "@/components/navbar-wrapper"
 import { SITE_IMAGE, SITE_URL, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_TITLE } from "@/lib/constants"
 import { AuthProvider } from "@/components/auth/auth-provider"
@@ -10,6 +10,14 @@ import Script from 'next/script'
 import { metadata as homeMetadata } from "./metadata" 
 
 const inter = Inter({ subsets: ["latin"] })
+
+// Viewport configuration
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
 
 // Use the enhanced metadata from metadata.ts but keep the rest of the configuration
 export const metadata: Metadata = {
@@ -29,7 +37,6 @@ export const metadata: Metadata = {
     google: 'm5RB8MFXNFTTLWsEqRTG-id0HCjUsKoWRBmoXyvZw-8',
   },
   manifest: "/favicon/site.webmanifest",
-  themeColor: "#000000",
   icons: {
     icon: [
       { rel: "icon", url: "/favicon/favicon.ico" },
