@@ -16,12 +16,12 @@ export default function CTA() {
         >
           <h2 className="relative font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">
             <span className="relative">
-              Ready to baptize your technology in purpose?
+              Ready to start the adventure?
               <span className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent blur-2xl opacity-50" />
             </span>
           </h2>
           <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Step into the future of faith-driven technology. Explore AI-powered discipleship tools trusted by believers seeking to grow deeper in their walk with Jesus.
+              Supercharge your study with AI. All the sources you need, from organizations you trust. One click away.
           </p>
         </motion.div>
         <motion.div
