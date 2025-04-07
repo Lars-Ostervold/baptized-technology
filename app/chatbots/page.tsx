@@ -34,10 +34,10 @@ export default function SolutionsPage() {
   return (
     <div className="container max-w-7xl py-12 sm:py-20">
       <WaterBackground/>
-      <div className="space-y-2 text-center mb-8 sm:mb-16">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Smart Tools for Curious Minds & Hungry Hearts</h1>
-        <p className="text-muted-foreground text-base sm:text-lg">
-          The best Christian thinkers, in your pocket—curated, summarized, and ready to explore.
+      <div className="space-y-4 text-center mb-8 sm:mb-16">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Your AI-Powered Christian Study Companion</h1>
+        <p className="text-muted-foreground text-base sm:text-lg max-w-3xl mx-auto">
+          Engage in meaningful conversations with AI models trained on the works of renowned Christian thinkers and organizations. Each chatbot is specialized in a particular perspective, allowing you to explore different  viewpoints and dive deeper into the story of Jesus.
         </p>
       </div>
 
@@ -71,20 +71,23 @@ export default function SolutionsPage() {
       {/* Search Bar */}
       <div className="relative max-w-md mx-auto mb-8 sm:mb-12">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search chatbots..."
+            placeholder="Search by name, category, or topic..."
             className="pl-12 h-12 bg-white/90 dark:bg-slate-900/90 focus:border-blue-500 focus:ring-blue-500/20"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          Try searching for topics like "Bible study", "theology", or "apologetics"
+        </p>
       </div>
 
       {/* Mobile scroll indicator */}
       <div className="sm:hidden flex flex-col items-center gap-2 mb-8">
-        <p className="text-sm text-muted-foreground">Scroll down to see the chatbot lineup</p>
+        <p className="text-sm text-muted-foreground">Scroll to explore our chatbot lineup</p>
         <div className="animate-bounce rounded-full bg-background/80 backdrop-blur-sm p-2 shadow-xl">
           <ChevronDown className="h-6 w-6 text-primary" />
         </div>
