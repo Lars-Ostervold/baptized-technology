@@ -52,7 +52,7 @@ export default function Hero() {
             animate="animate"
           />
           <div className="relative">
-            <h1 
+            <motion.h1 
               className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
               variants={textVariants}
             >
@@ -61,7 +61,19 @@ export default function Hero() {
                   Technology Immersed in the Fire of Baptism
                 </span>
               </span>
-            </h1>
+            </motion.h1>
+            <motion.div
+              className="absolute -top-1 -right-1"
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [0.5, 0.7, 0.5]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse" as const
+              }}
+            />
           </div>
         </motion.div>
         <motion.p 
@@ -105,4 +117,3 @@ export default function Hero() {
     </section>
   )
 }
-
