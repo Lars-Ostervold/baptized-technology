@@ -57,11 +57,9 @@ export default function Hero() {
               variants={textVariants}
             >
               <span className="relative inline-block">
-                <span className="absolute inset-0 bg-primary/15 blur-xl opacity-30" />
                 <span className="relative text-foreground">
                   Technology Immersed in the Fire of Baptism
                 </span>
-                <span className="absolute inset-0 bg-primary/10 blur-lg opacity-25" />
               </span>
             </motion.h1>
             <motion.div
@@ -119,4 +117,3 @@ export default function Hero() {
     </section>
   )
 }
-
