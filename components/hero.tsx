@@ -52,30 +52,16 @@ export default function Hero() {
             animate="animate"
           />
           <div className="relative">
-            <motion.h1 
+            <h1 
               className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
               variants={textVariants}
             >
               <span className="relative inline-block">
-                <span className="absolute inset-0 bg-primary/15 blur-xl opacity-30" />
                 <span className="relative text-foreground">
                   Technology Immersed in the Fire of Baptism
                 </span>
-                <span className="absolute inset-0 bg-primary/10 blur-lg opacity-25" />
               </span>
-            </motion.h1>
-            <motion.div
-              className="absolute -top-1 -right-1"
-              animate={{ 
-                scale: [1, 1.1, 1],
-                opacity: [0.5, 0.7, 0.5]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                repeatType: "reverse" as const
-              }}
-            />
+            </h1>
           </div>
         </motion.div>
         <motion.p 
