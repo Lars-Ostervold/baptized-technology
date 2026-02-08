@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-// Initialize Resend with your API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const dynamic = 'force-dynamic';
+
+// Initialize Resend lazily to avoid build-time errors when API key is missing
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +19,7 @@ export async function POST(req: Request) {
     }
     
     // Send email using Resend
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: "Baptized Technology Contact <lars@baptizedtechnology.com>", // You'll need to verify this domain in Resend
       to: "lars@baptizedtechnology.com",
       subject: `New Contact Form Submission from ${name}`,

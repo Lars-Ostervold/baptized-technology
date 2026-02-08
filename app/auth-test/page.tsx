@@ -1,6 +1,8 @@
 import ClientAuthComponent from '@/components/auth/client-component'
 import ServerAuthComponent from '@/components/auth/server-component'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AuthTestPage() {
   return (
     <div className="container max-w-4xl py-10">

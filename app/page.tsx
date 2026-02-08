@@ -1,64 +1,37 @@
-'use client'
-import Hero from "@/components/hero"
-import Features from "@/components/features"
-import CTA from "@/components/cta"
-import Footer from "@/components/footer"
-import WaterBackground from "@/components/water-background"
-import Script from 'next/script'
-import { SITE_NAME, SITE_URL } from "@/lib/constants"
+import Image from "next/image"
 
 export default function Home() {
-  // Structured data for better SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": SITE_NAME,
-    "url": SITE_URL,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${SITE_URL}/chatbots?q={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    },
-    "description": "Christian AI chatbots for Bible study, spiritual formation, and exploring faith concepts through the lens of Biblical theology.",
-  };
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": SITE_NAME,
-    "url": SITE_URL,
-    "logo": `${SITE_URL}/images/compact_logo_BT.png`,
-    "sameAs": [
-      "https://twitter.com/BaptizedTech",
-      "https://www.instagram.com/baptizedtechnology/"
-    ]
-  };
-
   return (
-    <>
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <Image
+        src="/images/compact_logo_BT.png"
+        alt="Baptized Technology"
+        width={80}
+        height={80}
+        className="mb-8 rounded-xl"
       />
-      <Script
-        id="organization-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
-      <div className="relative min-h-screen">
-        <WaterBackground />
-        <div className="relative z-10">
-          <Hero />
-          <Features />
-          <CTA />
-          <Footer />
-        </div>
-      </div>
-    </>
+
+      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+        Baptized Technology
+      </h1>
+
+      <p className="mt-4 max-w-md text-lg text-muted-foreground">
+        This project has been retired and is no longer maintained.
+      </p>
+
+      <p className="mt-6 max-w-md text-muted-foreground">
+        I&apos;m now working on what we&apos;re doing at Austin Christian University.
+      </p>
+
+      <a
+        href="https://austinchristianuniversity.org"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+      >
+        Visit Austin Christian University
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </main>
   )
 }
-

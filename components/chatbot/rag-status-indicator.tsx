@@ -94,7 +94,8 @@ export function RagStatusIndicator({ status, className }: RagStatusIndicatorProp
     >
       <motion.div
         animate={config.animation.icon}
-        transition={config.animation.transition}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        transition={config.animation.transition as any}
         className="relative"
       >
         <Icon className={cn('h-4 w-4', config.color)} />
